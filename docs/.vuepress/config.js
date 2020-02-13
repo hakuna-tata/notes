@@ -20,11 +20,11 @@ module.exports = {
     sidebar:{
       '/webSecurity/':[
         {
-          title: 'Web前后端漏洞分析与防御',
+          title: 'Web安全漏洞分析与防御',
           children:[
             ['','介绍'],
-            ['client','前端安全'],
-            ['server','后端安全']
+            ['client','客户端脚本安全'],
+            ['server','服务端应用安全']
           ]
         },
       ],
