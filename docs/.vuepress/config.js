@@ -4,7 +4,7 @@ module.exports = {
   title: 'FFFXUE',
   description: '开发笔记',
   head: [
-    ['link', { rel: 'icon', href: '/flag.gif' }],
+    ['link', { rel: 'icon', href: '/flag.ico' }],
   ],
   locales: {
     '/': {
