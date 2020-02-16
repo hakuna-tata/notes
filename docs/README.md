@@ -2,7 +2,7 @@
 home: true
 heroImage: /coffee.jpg
 heroText: 开发笔记
-tagline: less is more
+tagline: LESS IS MORE
 actionText: 立即查看 →
 actionLink: /webSecurity/
 # features:

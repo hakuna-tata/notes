@@ -434,7 +434,7 @@ CSRF的防御：
 > ***点击劫持***，本质是一种视觉欺骗，顺着这些思路也出现了一些类似图片覆盖，拖拽等类似攻击
 
 ClickJacking的防御：  
-1. 使用JS禁止内嵌iframe
+1. **使用JS禁止内嵌iframe**
 ```
   <script>
     if(top.location != window.location){
@@ -446,7 +446,7 @@ ClickJacking的防御：
 
 **但是有很多办法可以绕过JS代码，比如H5中iframe的sandbox属性，IE中iframe的security属性等，都可以使JS代码失效**
 
-2. 设置X-FRAME-OPTIONS禁止内嵌
+2. **设置X-FRAME-OPTIONS禁止内嵌**
 ```
   response.set("X-Frame-Options","DENY || SAME-ORIGIN || ...")
 ```

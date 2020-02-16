@@ -24,6 +24,7 @@ module.exports = {
           children:[
             ['','介绍'],
             ['client','客户端脚本安全'],
+            ['transport','传输层安全'],
             ['server','服务端应用安全']
           ]
         },
