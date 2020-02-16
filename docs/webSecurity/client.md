@@ -1,8 +1,33 @@
 ## 浏览器安全
+>随着互联网的发展， **浏览器** 成为互联网最大的入口。因此浏览器市场竞争也越发激烈，所以浏览器带来的安全功能也越来越
+强大，这也成为各大浏览器厂商之前竞争的一张底牌。  
+
+浏览器一些主要的安全功能有：
+1. **同源策略:**
+* 浏览器的同源策略，限制了来自不同源的“document”或脚本，对当前“document”读取或设置某些属性  
+
+  同源的条件（必须全部满足）：
+    - protocol(协议)
+    - host(子域名)
+    - port(端口)
+
+2. **CSP(Content Security Policy)**
+* 在HTTP的响应头中设定CSP的规则，可以规定当前网页可以加载的资源的白名单（指定哪些内容可以执行），
+从而减少网页受到XSS攻击的风险。所以说CSP是一个在现代浏览器加载资源白名单的安全机制，只有响应头中
+白名单里列出的资源才能够被加载、执行。
+
+3. **恶意网址拦截**
+* 恶意网址拦截一般就是浏览器周期性从服务端获取一份恶意网址黑名单，如果用户上网时访问的网站存在于此
+黑名单中，浏览器就会弹出一个警告页面。
+
+4. **浏览器沙箱(Sandbox)**  
+* 未来有时间研究webkit内核再来补充
 
 ## 跨站脚本攻击(XSS)
-> ***跨站脚本攻击***，英文全称是Cross Site Script，本来缩写是CSS，但是为了和层叠样式表（CSS）有所区别,所以在安全领域叫做“XSS”。    
-> **XSS攻击**分为反射型（url参数直接注入）和存储型（存储到DB后读取注入） 
+> ***跨站脚本攻击***，英文全称是Cross Site Script，本来缩写是CSS，但是为了和层叠样式表（CSS）有所区别,所以在安全领域叫做“XSS”。  
+XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，通过恶意脚本，控制用户的浏览器来执行一些违背用户的操作。  
+
+**XSS攻击**分为反射型（url参数直接注入）和存储型（存储到DB后读取注入）    
 
 常见的XSS攻击注入点：  
 1. **HTML节点内容：**
@@ -239,11 +264,32 @@
 * 处理结果：
   <img src="/notes/webSecurity/xss/xss-rt2.png" style="display:block;margin:0 auto"/>
 
+6. **CSP**(同浏览器安全介绍)
+```
+  const Koa = require("koa")
+  const Router = require("koa-router")
+  const app = new Koa()
+  const router = new Router()
+
+  router.all("/*",async (ctx, next) => {
+    ctx.set(`Content-Security-Policy`,`default-src 'self'`)
+    await next()
+  })
+  router.get('/test',async(ctx) => {
+    ctx.body = ""
+  })
+
+  app.use(router.routes())
+
+  app.listen(8000, () => console.log('[Server] starting at port 8000'))
+```
+* 处理结果：
+  <img src="/notes/webSecurity/xss/xss-csp.png" style="display:block;margin:0 auto"/>
+
+
 **总结：**
      
-> XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，通过恶意脚本，控制用户的
- 浏览器来执行一些违背用户的操作。
- **XSS漏洞虽然复杂，但是是可以解决的。设计XSS解决方案时，应该深入理解XSS攻击原理，针对不同场景使用不同的方法**
+> **XSS漏洞虽然复杂，但是是可以解决的。设计XSS解决方案时，应该深入理解XSS攻击原理，针对不同场景使用不同的方法**
  
 ## 跨站请求伪造(CSRF)
 > ***跨站请求伪造***，英文全称是Cross Site Request Forgery。是一种在攻击者的网站，在用户毫不知情的情况下向用户的网站
@@ -346,3 +392,66 @@ CSRF的防御：
 > CRSF攻击是攻击者利用用户的身份操作用户账号的一种方式。设计CSRF的防御方案必须先理解其原理和本质，而且和XSS防御相辅相成。
 
 ## 点击劫持(ClickJacking)
+>***点击劫持***，是一种视觉上的欺骗手段。攻击者使用一个透明，不可见的iframe,覆盖在
+一个网页上，然后诱使用户在该页面上进行操作，此时用户将在不知情的情况下点击透明的iframe页面。通过
+调整iframe页面的位置，可以诱使用户恰好点击在iframe页面的一些功能性按钮上。
+
+点击劫持攻击的演示：
+```
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClickJacking</title>
+    <style>
+      iframe{
+        opacity: 0;
+        position: absolute;
+        z-index: 2;
+      }
+      button{
+        top:10px;
+        left:190px;
+        position: absolute;
+        z-index: 1;
+        width: 60px;
+        background-color: #c09;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe src="http://www.emdoor.com/" width="800" height="600">
+    </iframe>
+    <button>Click Here</button>
+  </body>
+  </html>
+```
+* 当iframe半透明的时候，我们看到button其实覆盖在另一个网页，当我们点击button的时候其实是点击网页的某个操作：
+  <img src="/notes/webSecurity/clickJacking/cj1.png" style="display:block;margin:0 auto"/> 
+
+所以：
+> ***点击劫持***，本质是一种视觉欺骗，顺着这些思路也出现了一些类似图片覆盖，拖拽等类似攻击
+
+ClickJacking的防御：  
+1. 使用JS禁止内嵌iframe
+```
+  <script>
+    if(top.location != window.location){
+      top.location = window.location
+    }
+  </script>
+```
+  <img src="/notes/webSecurity/clickJacking/cj2.png" style="display:block;margin:0 auto"/>  
+
+**但是有很多办法可以绕过JS代码，比如H5中iframe的sandbox属性，IE中iframe的security属性等，都可以使JS代码失效**
+
+2. 设置X-FRAME-OPTIONS禁止内嵌
+```
+  response.set("X-Frame-Options","DENY || SAME-ORIGIN || ...")
+```
+
+**总结：**
+     
+> ClickJacking相对于XSS和CSRF来说，因为需要诱使用户与页面产生交互行为，因此攻击成本高，在安全方面比较少见，
+但还是不可不防。

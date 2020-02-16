@@ -12,3 +12,5 @@
 * [客户端脚本安全](./client.md)
 
 * [服务端应用安全](./server.md)
+
+* [文献：白帽子讲Web安全](https://item.jd.com/11483966.html)
