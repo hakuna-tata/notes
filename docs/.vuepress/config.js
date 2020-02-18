@@ -21,10 +21,11 @@ module.exports = {
       '/webSecurity/':[
         {
           title: 'Web安全漏洞分析与防御',
+          collapsable: false,
           children:[
             ['','介绍'],
             ['client','客户端脚本安全'],
-            ['transport','传输层安全'],
+            ['transport','流量劫持'],
             ['server','服务端应用安全']
           ]
         },
@@ -32,7 +33,6 @@ module.exports = {
       '/algorithm/':[
         {
           title: '介绍',
-          collapsable: false,
           children:[
             ['','介绍']
           ]
