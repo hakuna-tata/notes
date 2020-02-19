@@ -23,7 +23,7 @@
   ipconfig /flushdns 清理dns缓存
 ```
 结果：
-<img src="/notes/webSecurity/network/flushDNS.png" style="display:block;margin:0 auto"/>
+  <img src="/notes/webSecurity/network/flushDNS.png" style="display:block;margin:0 auto"/>
 
 2. **绕过运营商DNS解析**  
    - 使用自己的域名解析服务器
@@ -35,4 +35,20 @@
 ## HTTP劫持
 > HTTP劫持原理基本上也是因为HTTP属于明文协议，中间链路上的任意设备，都可以篡改内容。
 
+HTTP劫持测试：
+1. 用户正常请求http://www.emdoor.com/，banner图正常应该是如下：
+  <img src="/notes/webSecurity/network/http-proxy2.png" style="display:block;margin:0 auto"/>
+
+2. 我们试图在中间链路设备的代理层篡改请求数据，替换成本地图片： 
+  <img src="/notes/webSecurity/network/http-proxy1.png" style="display:block;margin:0 auto"/>
+
+3. 最终显示的是我们劫持修改了的图片：
+  <img src="/notes/webSecurity/network/http-proxy3.png" style="display:block;margin:0 auto"/>
+
+
+HTTP劫持的防御：  
+  - **不管使用CSP还是SRI校验资源，但是中间人都可以在HTTP明文中移除相关属性。所以比较理想的方案就是迁移到HTTPS上**
+
 ## HTTPS劫持
+> HTTPS传输协议即在HTTP传输数据过程中对报文进行加密（TLS）,然后使用CA证书认证机制来确定服务器身份。一般来说全站上HTTPS能防止大部分劫持，但是HTTPS并不一定是
+绝对安全的，加密的数据也是可以被劫持的。
