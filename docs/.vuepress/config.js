@@ -14,6 +14,7 @@ module.exports = {
   themeConfig: {
     repo: 'hakuna-tata/notes/',
     nav: [
+      { text: '设计模式', link: '/designPatterns/' },
       { text: 'Web安全', link: '/webSecurity/' },
       { text: '算法与数据结构', link: '/algorithm/' }
     ],

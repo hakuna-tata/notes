@@ -31,7 +31,7 @@ XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，�
 
 常见的XSS攻击注入点：  
 1. **HTML节点内容：**
-```
+```javascript
   const Koa = require("koa")
   const Router = require("koa-router")
   const app = new Koa()
@@ -56,7 +56,7 @@ XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，�
   <img src="/notes/webSecurity/xss/xss-dom2.png" style="display:block;margin:0 auto"/>  
 
 2. **HTML属性** 
- ```
+ ```javascript
   const Koa = require("koa")
   const Router = require("koa-router")
   const app = new Koa()
@@ -81,7 +81,7 @@ XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，�
 * 包含了存储型XSS攻击的用户请求：略
 
 3. **JS代码**  
-```
+```javascript
   const Koa = require("koa")
   const Router = require("koa-router")
   const app = new Koa()
@@ -107,9 +107,9 @@ XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，�
 * 包含了存储型XSS攻击的用户请求：略
 
 4. **富文本**  
-```
-  有时候网站需要用户提交一些自定的HTML代码，称为“富文本”。比如一些帖子的内容要有图片，视频，
-  表格等。这些“富文本”的效果都需要通过HTML代码来实现
+```javascript
+  //有时候网站需要用户提交一些自定的HTML代码，称为“富文本”。比如一些帖子的内容要有图片，视频，
+  //表格等。这些“富文本”的效果都需要通过HTML代码来实现
 
   const Koa = require("koa")
   const Router = require("koa-router")
@@ -135,7 +135,7 @@ XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，�
 
 常见的XSS防御措施：
 1. **Set-Cookie时设置httpOnly标记**
-```
+```javascript
   const Koa = require("koa")
   const Router = require("koa-router")
   const app = new Koa()
@@ -155,7 +155,7 @@ XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，�
   <img src="/notes/webSecurity/xss/xss-cookie.png" style="display:block;margin:0 auto"/>
 
 2. **HTML节点内容转译：**
-```
+```javascript
   const Koa = require("koa")
   const Router = require("koa-router")
   const app = new Koa()
@@ -190,7 +190,7 @@ XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，�
   <img src="/notes/webSecurity/xss/xss-atr2.png" style="display:block;margin:0 auto"/>
 
 4. **JS代码转义**
-```
+```javascript
   const Koa = require("koa")
   const Router = require("koa-router")
   const app = new Koa()
@@ -214,7 +214,7 @@ XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，�
   <img src="/notes/webSecurity/xss/xss-js2.png" style="display:block;margin:0 auto"/>
 
 5. **富文本白名单过滤**(GitHub:XSS第三方库)
-```
+```javascript
   const Koa = require("koa")
   const Router = require("koa-router")
   const cheerio = require("cheerio")
@@ -265,7 +265,7 @@ XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，�
   <img src="/notes/webSecurity/xss/xss-rt2.png" style="display:block;margin:0 auto"/>
 
 6. **CSP**(同浏览器安全介绍)
-```
+```javascript
   const Koa = require("koa")
   const Router = require("koa-router")
   const app = new Koa()
@@ -297,7 +297,7 @@ XSS攻击是攻击者能够对用户当前浏览的页面植入恶意脚本，�
 
 CSRF攻击的演示：
 1. 先运行自己的服务器
-```
+```javascript
   const Koa = require("koa")
   const Router = require("koa-router")
   const app = new Koa()
@@ -315,7 +315,7 @@ CSRF攻击的演示：
 
 ```
 2. 攻击者构造一个页面
-```
+```javascript
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -344,7 +344,7 @@ CSRF的防御：
 
 2. **Referer Check**  
   Referer Check可以检查请求是否来自合法的“源”
-```
+```javascript
   const Koa = require("koa")
   const Router = require("koa-router")
   const app = new Koa()
@@ -371,7 +371,7 @@ CSRF的防御：
   Cookie的sameSite属性用来限制第三方Cookie:  
   1.Strict最为严格，完全禁止第三方 Cookie，跨站点时，任何情况下都不会发送Cookie。换言之，只有当前网页的URL与请求目标一致，才会带上Cookie。  
   2.Lax规则稍稍放宽，大多数情况也是不发送第三方Cookie，但是导航到目标网址的Get请求除外。
-```
+```javascript
   const Koa = require("koa")
   const Router = require("koa-router")
   const app = new Koa()
@@ -397,7 +397,7 @@ CSRF的防御：
 调整iframe页面的位置，可以诱使用户恰好点击在iframe页面的一些功能性按钮上。
 
 点击劫持攻击的演示：
-```
+```html
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -435,7 +435,7 @@ CSRF的防御：
 
 ClickJacking的防御：  
 1. **使用JS禁止内嵌iframe**
-```
+```html
   <script>
     if(top.location != window.location){
       top.location = window.location
@@ -447,7 +447,7 @@ ClickJacking的防御：
 **但是有很多办法可以绕过JS代码，比如H5中iframe的sandbox属性，IE中iframe的security属性等，都可以使JS代码失效**
 
 2. **设置X-FRAME-OPTIONS禁止内嵌**
-```
+```javascript
   response.set("X-Frame-Options","DENY || SAME-ORIGIN || ...")
 ```
 
