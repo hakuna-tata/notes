@@ -26,8 +26,8 @@
   <img src="/notes/webSecurity/network/flushDNS.png" style="display:block;margin:0 auto"/>
 
 2. **绕过运营商DNS解析**  
-   - 使用自己的域名解析服务器
-   - 将解析好的域名以IP的形式发送
+    - 使用自己的域名解析服务器
+    - 将解析好的域名以IP的形式发送
 
 3. **DNS over TLS，DNS over HTTP(S)**  
   因为DNS解析是UDP传输信息不加密，中间链路设备可能篡改内容造成钓鱼诈骗和网络攻击。**采用TLS或者HTTP(S)加密传输数据**（本小白还没实践过，未来实践后再来补充）
@@ -46,9 +46,24 @@ HTTP劫持测试：
   <img src="/notes/webSecurity/network/http-proxy3.png" style="display:block;margin:0 auto"/>
 
 
-HTTP劫持的防御：  
+HTTP劫持的防御：   
   - **不管使用CSP还是SRI校验资源，但是中间人都可以在HTTP明文中移除相关属性。所以比较理想的方案就是迁移到HTTPS上**
 
 ## HTTPS劫持
-> HTTPS传输协议即在HTTP传输数据过程中对报文进行加密（TLS）,然后使用CA证书认证机制来确定服务器身份。一般来说全站上HTTPS能防止大部分劫持，但是HTTPS并不一定是
-绝对安全的，加密的数据也是可以被劫持的。
+> HTTPS传输协议即在HTTP传输数据过程中对报文进行加密（SSL/TLS）。一般来说全站上HTTPS能防止大部分劫持，但是HTTPS并不一定是绝对安全的，加密的数据也是可以被劫持的。
+
+加密的HTTPS事务：
+  <img src="/notes/webSecurity/network/HTTPS.png" style="display:block;margin:0 auto"/>
+
+**在SSL/TLS握手时客户端和服务器会进行密钥协商然后对数据加密。因此在密钥协商时要确认身份，所以需要引入一个第三方信任机制，即证书颁发机构（CA, Certificate Authority）颁发数字证书。** 
+
+> TIP: SSL/TLS使用方式，握手过程可能会更复杂些
+
+HTTPS是如何确定服务器的：
+  <img src="/notes/webSecurity/network/CA.png" style="display:block;margin:0 auto"/>
+
+常见HTTPS的劫持：  
+1.**安装伪造的CA证书，然后被代理服务器劫持**  
+  - 这样代理服务器可以在中间篡改被劫持浏览器传输的数据
+
+2.**破解SSL/TLS加密网络数据包**
