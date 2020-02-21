@@ -39,7 +39,7 @@ HTTP劫持测试：
 1. 用户正常请求http://www.emdoor.com/，banner图正常应该是如下：
   <img src="/notes/webSecurity/network/http-proxy2.png" style="display:block;margin:0 auto"/>
 
-2. 我们试图在中间链路设备的代理层篡改请求数据，替换成本地图片： 
+2. 使用Fiddler代理工具篡改请求数据，替换成本地图片： 
   <img src="/notes/webSecurity/network/http-proxy1.png" style="display:block;margin:0 auto"/>
 
 3. 最终显示的是我们劫持修改了的图片：
