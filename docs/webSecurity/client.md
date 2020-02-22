@@ -328,7 +328,7 @@ CSRF攻击的演示：
   </body>
   </html>
 ```
-* 当用户点击攻击者链接：
+* 当用户点击攻击者构造页面的链接：
   <img src="/notes/webSecurity/csrf/csrf-1.png" style="display:block;margin:0 auto"/>  
 
 其实：
