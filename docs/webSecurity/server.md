@@ -1,4 +1,4 @@
-## 注入攻击
+## SQL注入
 
 ## 密码加密
 > 密码是最常见的一种认证手段，持有正确密码的人被认为是最可信的。为了保证密码的安全，一般来说必须以不可逆的加密算法，或者是单向散列函数算法，加密后存储在数据库中。
@@ -18,7 +18,7 @@
 
 文件上传漏洞演示：
 
-客户端上传文件：
+* 客户端上传：
 ```html
   <!DOCTYPE html>
   <html lang="en">
@@ -66,12 +66,19 @@
   </html>
 ```
 
-服务端开启服务
+* 服务端保存文件
 ```javascript
+  const fs = require("fs")
+  const path = require("path")
   const Koa = require("koa")
   const Router = require("koa-router")
+  const koaBody = require('koa-body')
   const app = new Koa()
   const router = new Router()
+
+  app.use(koaBody({
+    multipart: true
+  }))
 
   router.all('/*',async(ctx,next) => {
     ctx.set('Access-Control-Allow-Origin', '*')
@@ -79,10 +86,12 @@
   })
 
   router.post('/test',async(ctx) => {
-    ctx.status = 200
-    ctx.body = {
-      code: 0,
-    }
+    const file = ctx.request.files
+    const reader = fs.createReadStream(file.chunk.path)
+    let filePath = path.join(__dirname,"upload/") + `/${file.chunk.name}`
+    const upStream = fs.createWriteStream(filePath)
+    reader.pipe(upStream)
+    ctx.body = "上传成功"
   })
 
   app.use(router.routes())
@@ -90,6 +99,26 @@
   app.listen(8000, () => console.log('[Server] starting at port 8000'))
 ```
 
+* 上传结果：
+  <img src="/notes/webSecurity/upload/upload.png" style="display:block;margin:0 auto"/>
+
+**所以也就说当我们客户端需要上传的是图片然而上传的却是注入脚本的时候就会出现严重后果。如果用户通过url访问上传的脚本并执行，这时候整个服务器就完全暴露了。**
+
 设计安全的文件上传：
+1. **文件上传的目录设置为不可执行**
+    - 杜绝了脚本执行的可能（放到独立的存储做静态文件处理，读取文件返回）
+
+2. **判断文件类型(只能简单防御)**
+    - 判断文件类型时结合MIME TYPE，后缀检查等方式
+    - 文件类型检查中用白名单过滤方式 
+
+3. **权限控制**
+    - 可写与可执行互斥  
 
 >总结：文件上传往往与代码执行联系在一起，因此对于业务中要用到的上传功能，都应该进行严格的检查。
+
+## 拒绝服务攻击
+> 拒绝服务攻击英文翻译为DoS（Denial of Service）。一般指的是利用合理的请求造成资源过载（发送大量数据包），导致服务不可用。
+
+## 重放攻击
+> 重放攻击又称重播攻击、回放攻击, 是指攻击者发送目的主机已接收过的数据, 以达到欺骗系统的目的, 主要用于身份认证过程, 破坏认证的正确性。
