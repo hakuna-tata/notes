@@ -22,7 +22,6 @@ module.exports = {
       '/webSecurity/':[
         {
           title: 'Web安全漏洞分析与防御',
-          collapsable: false,
           children:[
             ['','介绍'],
             ['client','客户端脚本安全'],

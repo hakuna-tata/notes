@@ -1,7 +1,7 @@
 ---
 home: true
 heroImage: /coffee.jpg
-heroText: 开发笔记
+heroText: 工作总结笔记
 tagline: LESS IS MORE
 actionText: 立即查看 →
 actionLink: /webSecurity/
