@@ -29,8 +29,8 @@
     - 使用自己的域名解析服务器
     - 将解析好的域名以IP的形式发送
 
-3. **DNS over TLS，DNS over HTTP(S)**  
-  因为DNS解析是UDP传输信息不加密，中间链路设备可能篡改内容造成钓鱼诈骗和网络攻击。**采用TLS或者HTTP(S)加密传输数据**（未来实践后再来补充）
+3. **DNS over TLS，DNS over HTTPS**  
+  因为DNS解析是UDP传输信息不加密，中间链路设备可能篡改内容造成钓鱼诈骗和网络攻击。**采用TLS或者HTTPS加密传输数据**（未来实践后再来补充）
 
 ## HTTP劫持
 > HTTP劫持原理基本上也是因为HTTP属于明文协议，中间链路上的任意设备，都可以篡改内容。
@@ -52,18 +52,22 @@ HTTP劫持的防御：
 ## HTTPS劫持
 > HTTPS传输协议即在HTTP传输数据过程中对报文进行加密（SSL/TLS）。一般来说全站上HTTPS能防止大部分劫持，但是HTTPS并不一定是绝对安全的，加密的数据也是可以被劫持的。
 
-加密的HTTPS事务：
-  <img src="/notes/webSecurity/network/HTTPS.png" style="display:block;margin:0 auto"/>
+**HTTPS原理：**
+1. **对称加密技术**  
+- 算法f，服务端和客户端共享相同的秘钥k，以及需要传送的数据:
+  <img src="/notes/webSecurity/network/symmetric.png" style="display:block;margin:0 auto"/>
+> 可以发现只用对称加密数据是不可取的，秘钥k值太多对管理是个噩梦，k值唯一则攻击者轻易解密数据。
 
-**在SSL/TLS握手时客户端和服务器会进行密钥协商然后对数据加密。因此在密钥协商时要确认身份，所以需要引入一个第三方信任机制，即证书颁发机构（CA, Certificate Authority）颁发数字证书。** 
+2. **非对称加密技术**
+- 算法f,公开秘钥ek,私有秘钥dk,以及需要传送的数据：
+  <img src="/notes/webSecurity/network/public-key.png" style="display:block;margin:0 auto"/>
+> 可以发现非对称加密数据客户端向服务端传输是安全的，但是服务端向客户端传输是不安全。
+  
+3. **对称加密+非对称加密**
+  <img src="/notes/webSecurity/network/mix.png" style="display:block;margin:0 auto"/>
+> 可以发现对称加密+非对称加密结合传输数据也不是安全的，中间人（第一步就介入了）可以把自己的公钥给了客户端，自己去获取了服务端的公钥，然后获取了后续对称加密的秘钥k。
 
-> TIP: SSL/TLS使用方式，握手过程可能会更复杂些
-
-HTTPS是如何确定服务器的：
+4. **对称加密+非对称加密+CA**
+- CA机构获取证书
   <img src="/notes/webSecurity/network/CA.png" style="display:block;margin:0 auto"/>
-
-常见HTTPS的劫持：  
-1.**安装伪造的CA证书，然后被代理服务器劫持**  
-  - 这样代理服务器可以在中间篡改被劫持浏览器传输的数据
-
-2.**破解SSL/TLS加密网络数据包**
+> 可以发现客服端和服务端换协商出一个用于后面对称加密的密钥。但是协商密钥的生成需要客户端和服务端明文信息，所以正常情况下中间人获取不到对称加密秘钥k。
