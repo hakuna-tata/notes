@@ -47,12 +47,12 @@ HTTP劫持测试：
 
 
 HTTP劫持的防御：   
-  - **不管使用什么策略校验资源，中间人都可以在HTTP明文中移除相关属性。所以比较理想的方案就是迁移到HTTPS上**
+  - **HTTP传输已经是明文传输了，比较理想的方案就是迁移到HTTPS上**
 
 ## HTTPS劫持
 > HTTPS传输协议即在HTTP传输数据过程中对报文进行加密（SSL/TLS）。一般来说全站上HTTPS能防止大部分劫持，但是HTTPS并不一定是绝对安全的，加密的数据也是可以被劫持的。
 
-**HTTPS原理：**
+HTTPS原理：
 1. **对称加密技术**  
 - 算法f，服务端和客户端共享相同的秘钥k，以及需要传送的数据:
   <img src="/notes/webSecurity/network/symmetric.png" style="display:block;margin:0 auto"/>
@@ -71,3 +71,12 @@ HTTP劫持的防御：
 - CA机构获取证书
   <img src="/notes/webSecurity/network/CA.png" style="display:block;margin:0 auto"/>
 > 可以发现客服端和服务端换协商出一个用于后面对称加密的密钥。但是协商密钥的生成需要客户端和服务端明文信息，所以正常情况下中间人获取不到对称加密秘钥k。
+
+5. **密钥协商的过程中，交换的并不是密钥，而是生成秘钥用的信息**
+- 运用网上一张解释秘钥协商过程的宏观图
+  <img src="/notes/webSecurity/network/associate.png" style="display:block;margin:0 auto"/>
+> 最终协商出的秘钥k，是客户端和服务端对交换的信息分别进行hash认证，认证成功则对交换信息过程中传输的随机数用约定的算法计算得到秘钥k（信息未被篡改则双方秘钥k肯定是相同的。
+
+HTTPS劫持：
+1. **攻击SSL/TLS握手过程**
+  - 缺少实践经验，未来补充
