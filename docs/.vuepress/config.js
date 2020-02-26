@@ -14,14 +14,16 @@ module.exports = {
   themeConfig: {
     repo: 'hakuna-tata/notes/',
     nav: [
-      { text: '设计模式', link: '/designPatterns/' },
+      { text: 'Vue/React', link: '/frame/' },
       { text: 'Web安全', link: '/webSecurity/' },
+      { text: '设计模式', link: '/designPatterns/' },
       { text: '算法与数据结构', link: '/algorithm/' }
     ],
     sidebar:{
       '/webSecurity/':[
         {
           title: 'Web安全漏洞分析与防御',
+          collapsable: false, 
           children:[
             ['','介绍'],
             ['client','客户端脚本安全'],
@@ -29,6 +31,16 @@ module.exports = {
             ['server','服务端应用安全']
           ]
         },
+      ],
+      '/designPatterns/':[
+        {
+          title: '设计模式',
+          collapsable: false, 
+          children: [
+            ['','介绍'],
+            ['factory', '工厂模式']
+          ]
+        }
       ],
       '/algorithm/':[
         {
