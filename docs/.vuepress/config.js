@@ -14,7 +14,6 @@ module.exports = {
   themeConfig: {
     repo: 'hakuna-tata/notes/',
     nav: [
-      { text: 'Vue/React', link: '/frame/' },
       { text: 'Web安全', link: '/webSecurity/' },
       { text: '设计模式', link: '/designPatterns/' },
       { text: '算法与数据结构', link: '/algorithm/' }
@@ -38,7 +37,13 @@ module.exports = {
           collapsable: false, 
           children: [
             ['','介绍'],
-            ['factory', '工厂模式']
+            ['factory', '工厂模式'],
+            ['singleton', '单例模式'],
+            ['strategy', '策略模式'],
+            ['proxy', '代理模式'],
+            ['adapter', '适配器模式'],
+            ['decorator', '装饰器模式'],
+            ['observer', '观察者模式']
           ]
         }
       ],
