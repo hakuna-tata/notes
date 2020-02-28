@@ -94,7 +94,3 @@ const validator = {
 validator.isEmail('123@163.com'); //=> true
 validator.isInt('123'); //=> false
 ```
-
-总结验证：
-> 1. 符合开放/封闭原则（将算法封装在独立的 strategy 中，使得它们易于切换，易于理解，易于扩展）  
-> 2. 利用组合、委托和多态等技术和思想，可以有效地避免多重条件选择语句

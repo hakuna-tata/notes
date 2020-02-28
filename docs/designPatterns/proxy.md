@@ -51,7 +51,3 @@ function proxy (target: Object, sourceKey: string, key: string) {
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 ```
-
-总结验证：
-> 1. 符合开放/封闭原则
-> 2. 代理类和目标类分离，隔离开目标类和使用者

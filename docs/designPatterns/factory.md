@@ -32,6 +32,3 @@ function createElement(/*...*/) {
   return ReactElement(/*...*/)
 }
 ```
-总结验证：
-> 1. 符合单一职责原则(构造函数和创建者分离)
-> 2. 符合开放/封闭原则
