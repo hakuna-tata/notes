@@ -40,16 +40,15 @@ module.exports = {
             ['factory', '工厂模式'],
             ['singleton', '单例模式'],
             ['strategy', '策略模式'],
+            ['state', '状态模式'],
             ['proxy', '代理模式'],
             ['exterior', '外观模式'],
             ['adapter', '适配器模式'],
             ['decorator', '装饰器模式'],
-            ['iterator', '迭代器模式'],
-            ['state', '状态模式'],
             ['share', '享元模式'],
-            ['observer', '观察者模式'],
-            ['command', '命令模式'],
-            ['chain', '职责链模式']
+            ['composite', '组合模式'],
+            ['iterator', '迭代器模式'],
+            ['observer', '观察者模式']
           ]
         }
       ],
