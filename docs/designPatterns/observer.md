@@ -261,7 +261,7 @@ class Watcher {
 2. **Node.js events模块**
 ``` javascript
 /**
- * 事件监听者
+ * 事件订阅者
  */
 EventEmitter.prototype.addListener = function addListener(type, listener) {
   return _addListener(this, type, listener, false);

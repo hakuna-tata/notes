@@ -54,21 +54,10 @@ module.exports = {
       ],
       '/algorithm/':[
         {
-          title: '介绍',
+          title: '算法与数据结构',
           children:[
-            ['','介绍']
-          ]
-        },
-        {
-          title: '算法复杂度',
-          children: [
-            ['algorithmComplexity','什么是大O(Big O)']
-          ]
-        },
-        {
-          title: '链表',
-          children: [
-            'link'
+            ['','算法和算法分析'],
+            ['link','链表']
           ]
         }
       ]
