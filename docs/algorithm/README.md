@@ -49,3 +49,50 @@ TimeConsume()
 > O(nlogn)的算法可以处理大约在 10^7 级别的数量
 
 ## 试验自己算法的复杂度
+> **通过实验，将数据规模从N => 2N，观察时间变化的趋势（这样做可以有效地排除 常数C 对计算带来的误差）**
+
+1. **时间复杂度为O(logn)**
+
+2. **时间复杂度为O(n)**
+``` java
+package com.fffxue.demo;
+
+import java.util.*;
+
+public class FindMax {
+    public static void main(String[] args) {
+        for(int i = 20; i <= 27; i++){
+            int n = (int) Math.pow(2, i);
+            int[] arr = new int[n];
+            Arrays.fill(arr, 1);
+            long start = System.currentTimeMillis();
+            findMax(arr ,n);
+            long end = System.currentTimeMillis();
+            System.out.println("2^" + i + "所花费的时间为:" + (end - start) + "ms");
+        }
+
+    }
+    static int findMax(int[] arr, int n){
+        int res = arr[0];
+        for(int i = 1; i < n; i++){
+            if(arr[i] > res) res = arr[i];
+        }
+        return res;
+    }
+  }
+}
+// 2^20所花费的时间为:3ms
+// 2^21所花费的时间为:1ms
+// 2^22所花费的时间为:2ms
+// 2^23所花费的时间为:4ms
+// 2^24所花费的时间为:8ms
+// 2^25所花费的时间为:15ms
+// 2^26所花费的时间为:25ms
+// 2^27所花费的时间为:50ms
+```
+> 所以时间复杂度为O(n)的算法，数据规模N 翻倍到 2N，对应消耗的时间也约为 2 倍。
+
+
+3. **时间复杂度为O(nlogn)**
+
+4. **时间复杂度为O(n^2)**
