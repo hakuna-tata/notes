@@ -14,22 +14,26 @@ module.exports = {
   themeConfig: {
     repo: 'hakuna-tata/notes/',
     nav: [
-      { text: 'Web安全', link: '/webSecurity/' },
+      { text: '算法与数据结构', link: '/algorithm/' },
       { text: '设计模式', link: '/designPatterns/' },
-      { text: '算法与数据结构', link: '/algorithm/' }
+      { text: '玩具工具包', link: '/kit/' },
+      {   
+        text: 'Web系列',
+        items: [
+          { text: 'Web安全', link: '/webSecurity/'},
+          { text: '性能优化', link: '/performance/'}
+        ]
+      }
     ],
     sidebar:{
-      '/webSecurity/':[
+      '/algorithm/':[
         {
-          title: 'Web安全漏洞分析与防御',
-          collapsable: false, 
+          title: '算法与数据结构',
           children:[
-            ['','介绍'],
-            ['client','客户端脚本安全'],
-            ['transport','流量劫持'],
-            ['server','服务端应用安全']
+            ['','算法和算法分析'],
+            ['link','链表']
           ]
-        },
+        }
       ],
       '/designPatterns/':[
         {
@@ -52,14 +56,28 @@ module.exports = {
           ]
         }
       ],
-      '/algorithm/':[
+      '/kit/':[
         {
-          title: '算法与数据结构',
+          title: '玩具工具包',
+          collapsable: false,
           children:[
-            ['','算法和算法分析'],
-            ['link','链表']
+            ['','介绍'],
+            ['koa','Koa'],
+            ['bundler','Bundler'],
           ]
         }
+      ],
+      '/webSecurity/':[
+        {
+          title: 'Web安全漏洞分析与防御',
+          collapsable: false, 
+          children:[
+            ['','介绍'],
+            ['client','客户端脚本安全'],
+            ['transport','流量劫持'],
+            ['server','服务端应用安全']
+          ]
+        },
       ]
     },
     lastUpdated: '上次更新'
