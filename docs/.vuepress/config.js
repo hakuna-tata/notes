@@ -62,8 +62,8 @@ module.exports = {
           collapsable: false,
           children:[
             ['','介绍'],
-            ['koa','Koa'],
             ['bundler','Bundler'],
+            ['koa','Koa']
           ]
         }
       ],

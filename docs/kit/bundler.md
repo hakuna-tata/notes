@@ -10,12 +10,12 @@
 
 **webpack的打包过程，会基于这些基本步骤进行扩展，比如Loader就是用于打包前对模块源代码进行转换，Plugin就是在编译构建时将特定的任务注入特定的钩子中。**
 
-## 简析一个打包工具
+## 简析实现一个打包工具
 假如src目录有以下文件：
 ``` js
 //index.js
-import message from './message.js'
-console.log(message)
+import message from './message.js';
+console.log(message);
 
 //message.js
 import { word } from './word.js';
@@ -23,7 +23,7 @@ const message = `say ${word}`;
 export default message;
 
 //word.js
-export const word = 'hello'
+export const word = 'hello';
 ```
 使用一个bundler.js给src目录下文件进行打包
 
@@ -87,7 +87,7 @@ const makeDependenciesGraph = ( entry ) => {
     }
   }
   // 生成图谱
-  const graph = {}
+  const graph = {};
   graphArray.forEach(item => {
       graph[item.filename] = {
           dependencies: item.dependencies,
