@@ -1,7 +1,24 @@
 > 定义：保证一个类仅有一个实例，并提供一个访问它的全局访问点。  
-> **使用Vue.use(plugin)类单例模式以及业务场景来介绍单例模式**
+> **使用Vue中工具方法once以及Vue.use(plugin)来介绍单例模式**
 
-1. **vue.use(plugin)**
+1. **vue src/shared/util**
+```typescript
+/**
+ * Ensure a function is called only once.
+ */
+export function once (fn: Function): Function {
+  let called = false
+  return function () {
+    if (!called) {
+      called = true
+      fn.apply(this, arguments)
+    }
+  }
+}
+```
+
+
+2. **vue.use(plugin)类似单例模式**
 ``` javascript
   Vue.use = function (plugin: Function | Object) {  // 接收一个 plugin 参数可以是 Function 也可以是 Object
     const installedPlugins = (this._installedPlugins || (this._installedPlugins = []))
@@ -22,28 +39,4 @@
     installedPlugins.push(plugin)
     return this
   }
-```
-
-2. **业务场景**
-``` javascript
-  const showForm  = (function(){
-    let form
-    return function(name){
-      if(!form){
-        form = name
-      }
-      return form
-    }
-  })()
-  // 通用的惰性单例
-  const getSingle = function(fn){
-    let instance
-    return function(){
-      return instance || (instance = fn.apply(this,arguments))
-    }
-  }
-
-  var a = getSingle(showForm)
-  var b = getSingle(showForm)
-  console.log(a("1") === b("2")) // true
 ```
