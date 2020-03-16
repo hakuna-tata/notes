@@ -26,13 +26,11 @@ export function once (fn: Function): Function {
     if (installedPlugins.indexOf(plugin) > -1) {
       return this
     }
-    // additional parameters
-    const args = toArray(arguments, 1)
+    const args = toArray(arguments, 1) // []
+    // 将 Vue 对象推入 args 头部，执行 install 方法第一个参数就可以拿到 Vue 对象，因此插件的编写方不需要再额外去import Vue 了
     args.unshift(this)
-    // plugin 是 Object, Object中是否含有install方法
     if (typeof plugin.install === 'function') {
       plugin.install.apply(plugin, args)
-    // plugin 是 Function
     } else if (typeof plugin === 'function') {
       plugin.apply(null, args)
     }
