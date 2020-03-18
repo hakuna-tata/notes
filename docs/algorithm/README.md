@@ -19,29 +19,30 @@
 * 它的度量方法和算法的时间复杂度相似（**递归调用具有严重空间代价**）
 
 ## 数据规模的概念
-``` js
-function TimeConsume(){
-  for(let i = 1; i <= 10; i++){
-    var n = Math.pow(10, i);
-    console.time(`10^${i}数量级消耗时间`)
-    var sum = 0;
-    for(let x = 0; x < n; x ++){
-      sum += x;
+``` java
+public class TimeConsume {
+    public static void main(String[] args) {
+        for(int i = 1; i < 10; i++){
+            int n = (int)Math.pow(10, i);
+            int sum = 0;
+            long start = System.currentTimeMillis();
+            for(int j = 0; j < n; j++){
+                sum += j;
+            }
+            long end = System.currentTimeMillis();
+            System.out.println("10^" + i + "数量级消耗时间为:" + (end - start) + "ms");
+        }
     }
-    console.timeEnd(`10^${i}数量级消耗时间`)
-  }
 }
-TimeConsume()
-// 10^1数量级消耗时间: 0.148ms
-// 10^2数量级消耗时间: 0.009ms
-// 10^3数量级消耗时间: 0.018ms
-// 10^4数量级消耗时间: 0.169ms
-// 10^5数量级消耗时间: 6.019ms
-// 10^6数量级消耗时间: 1.038ms
-// 10^7数量级消耗时间: 10.334ms
-// 10^8数量级消耗时间: 103.280ms
-// 10^9数量级消耗时间: 1030.906ms
-// 10^10数量级消耗时间: 12490.953ms 
+// 10^1数量级消耗时间为:0ms
+// 10^2数量级消耗时间为:0ms
+// 10^3数量级消耗时间为:0ms
+// 10^4数量级消耗时间为:0ms
+// 10^5数量级消耗时间为:1ms
+// 10^6数量级消耗时间为:5ms
+// 10^7数量级消耗时间为:12ms
+// 10^8数量级消耗时间为:114ms
+// 10^9数量级消耗时间为:1187ms
 ```
 所以，如果想要在1s内解决问题:
 > O(n^2)的算法可以处理大约在 10^4 级别的数量  
