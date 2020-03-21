@@ -21,6 +21,7 @@ module.exports = {
         text: 'Web系列',
         items: [
           { text: 'Web安全', link: '/webSecurity/'},
+          { text: '浏览器工作原理与实践', link: '/browser/'},
           { text: '性能优化', link: '/performance/'}
         ]
       }
@@ -78,6 +79,13 @@ module.exports = {
             ['server','服务端应用安全']
           ]
         },
+      ],
+      '/browser/':[
+        {
+          title: '浏览器工作原理与实践',
+          collapsable: false, 
+          children:['']
+        }
       ]
     },
     lastUpdated: '上次更新'

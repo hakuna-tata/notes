@@ -22,11 +22,11 @@
 ``` java
 public class TimeConsume {
     public static void main(String[] args) {
-        for(int i = 1; i < 10; i++){
-            int n = (int)Math.pow(10, i);
-            int sum = 0;
+        for(int i = 1; i <= 10; i++){
+            long n = (long)Math.pow(10, i);
+            long sum = 0L;
             long start = System.currentTimeMillis();
-            for(int j = 0; j < n; j++){
+            for(Long j = 0L; j < n; j++){
                 sum += j;
             }
             long end = System.currentTimeMillis();
@@ -37,12 +37,13 @@ public class TimeConsume {
 // 10^1数量级消耗时间为:0ms
 // 10^2数量级消耗时间为:0ms
 // 10^3数量级消耗时间为:0ms
-// 10^4数量级消耗时间为:0ms
-// 10^5数量级消耗时间为:1ms
-// 10^6数量级消耗时间为:5ms
-// 10^7数量级消耗时间为:12ms
-// 10^8数量级消耗时间为:114ms
-// 10^9数量级消耗时间为:1187ms
+// 10^4数量级消耗时间为:3ms
+// 10^5数量级消耗时间为:9ms
+// 10^6数量级消耗时间为:16ms
+// 10^7数量级消耗时间为:87ms
+// 10^8数量级消耗时间为:920ms
+// 10^9数量级消耗时间为:5919ms
+// 10^10数量级消耗时间为:60639ms
 ```
 所以，如果想要在1s内解决问题:
 > O(n^2)的算法可以处理大约在 10^4 级别的数量  
