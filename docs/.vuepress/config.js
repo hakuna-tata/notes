@@ -15,14 +15,14 @@ module.exports = {
     repo: 'hakuna-tata/notes/',
     nav: [
       { text: '算法与数据结构', link: '/algorithm/' },
+      { text: '计算机网络', link: '/network/' },
       { text: '设计模式', link: '/designPatterns/' },
-      { text: '玩具工具包', link: '/kit/' },
       {   
         text: 'Web系列',
         items: [
-          { text: 'Web安全', link: '/webSecurity/'},
+          { text: 'Web安全', link: '/webSecurity/client/'},
           { text: '浏览器工作原理与实践', link: '/browser/'},
-          { text: '性能优化', link: '/performance/'}
+          { text: '玩具工具包', link: '/kit/bundler/' }
         ]
       }
     ],
@@ -30,9 +30,19 @@ module.exports = {
       '/algorithm/':[
         {
           title: '算法与数据结构',
+          collapsable: false, 
           children:[
             ['','算法和算法分析'],
             ['link','链表']
+          ]
+        }
+      ],
+      '/network/':[
+        {
+          title: '计算机网络',
+          collapsable: false, 
+          children:[
+            ['','概述']
           ]
         }
       ],
@@ -62,7 +72,6 @@ module.exports = {
           title: '玩具工具包',
           collapsable: false,
           children:[
-            ['','介绍'],
             ['bundler','Bundler'],
             ['koa','Koa']
           ]
@@ -73,7 +82,6 @@ module.exports = {
           title: 'Web安全漏洞分析与防御',
           collapsable: false, 
           children:[
-            ['','介绍'],
             ['client','客户端脚本安全'],
             ['transport','流量劫持'],
             ['server','服务端应用安全']
@@ -83,8 +91,10 @@ module.exports = {
       '/browser/':[
         {
           title: '浏览器工作原理与实践',
-          collapsable: false, 
-          children:['']
+          collapsable: false,
+          children:[
+            ['','探索浏览器']
+          ]
         }
       ]
     },
