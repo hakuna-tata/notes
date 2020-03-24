@@ -16,39 +16,44 @@
     <title>文件上传漏洞</title>
   </head>
   <body>
-    <input type="file" id="picFile">
+    <div class="main">
+        <h1>文件上传</h1>
+        <input type="file" id="file" />
+        <button id="btn_upload">上传</button>
+        <div id="progress" class="progress">
+            <div></div>
+        </div>
+    </div>
     <script>
       function $ajax(options){
-        let opt = Object.assign({
-          url: "",
-          method: "post",
-          headers: {},
-          data: null
-        },options)
-        let xhr = new XMLHttpRequest
-        xhr.open(opt.method,opt.url,true)
-        Object.keys(opt.headers).forEach(key => {
-          xhr.setRequestHeader(key,opt.headers[key])
-        })
-        xhr.onreadystatechange = () => {
-          if(xhr.readyState === 4){
-            if(/^(2|3)\d{2}$/.test(xhr.status)){
-              return xhr.responseText
-            }
+      
+      }
+      let input_file = document.querySelector("#file"),
+            btn_upload = document.querySelector("#btn_upload"),
+            progress = document.querySelector("#progress"),
+            progressbar = progress.querySelector("div"),
+            start = 0,
+            end = 0,
+            index = 0; //分片索引
+        const BLOCK_SIZE = 1024 * 1024; //分片大小1MB
+
+        btn_upload.addEventListener("click", async () => {
+          let blob = input_file.files[0];
+          let file_size = blob.size;
+          let total = Math.ceil(file_size / BLOCK_SIZE);
+          while(start < file_size){
+            end = start + BLOCK_SIZE;
+            let block = blob.slice(start, end);
+            let data = new FormData();
+            data.set(blob.name, block, blob.name);
+            data.set("index", index);
+            await $ajax(data);
+            index++;
+            start = end;
+            $(progressbar).css("width", index * 100 / total + "%")
           }
-        }
-        xhr.send(opt.data)
-      }
-      picFile.onchange = function(){
-        let fl = picFile.files[0]
-        let formData = new FormData()
-        formData.append("chunk",fl)
-        formData.append("filename",fl.name)
-        $ajax({
-          url:"http://127.0.0.1:8000/test",
-          data:formData
+          // alert("上传成功")
         })
-      }
     </script>
   </body>
   </html>

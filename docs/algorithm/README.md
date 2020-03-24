@@ -148,32 +148,31 @@ TimeConsume()
       }
       return arr;
     },
-    merge: function(arr, from, mid, to){
+    merge: function(arr, l, m, r){
       let leftArr = [];
       let rightArr = [];
-      for(let i=from; i<= mid; i++) {
+      for(let i = l; i <= m; i++) {
         leftArr.push(arr[i]);
       }
-      for(let j=mid+1; j<= to; j++) {
+      for(let j = m+1; j <= r; j++) {
         rightArr.push(arr[j]);
       }
-      let i = 0, j = 0;
-      for(let n = from; n<= to; n++) {
+      let i = 0 , j = 0;
+      for(let k = l; k <= r; k++){
         if (i >= leftArr.length) {
-          arr[n] = rightArr[j];
+          arr[k] = rightArr[j];
           j++;
-          continue;
         }
-        if (j >= rightArr.length) {
-          arr[n] = leftArr[i];
+        else if (j >= rightArr.length) {
+          arr[k] = leftArr[i];
           i++;
-          continue;
         }
-        if (leftArr[i] > rightArr[j]) {
-          arr[n] = rightArr[j];
-          j++;
-        } else {
-          arr[n] = leftArr[i];
+        else if(leftArr[i] > rightArr[j]){
+          arr[k] = rightArr[j];
+          j++
+        }
+        else{
+          arr[k] = leftArr[i];
           i++;
         }
       }
@@ -198,12 +197,12 @@ TimeConsume()
   }
   return action.TimeConsume()
 })()
-// 2^20所消耗的时间为: 361.700ms
-// 2^21所消耗的时间为: 667.906ms
-// 2^22所消耗的时间为: 1422.435ms
-// 2^23所消耗的时间为: 2991.644ms
-// 2^24所消耗的时间为: 6389.287ms
-// 2^25所消耗的时间为: 13957.756ms
+// 2^20所消耗的时间为: 322.579ms
+// 2^21所消耗的时间为: 726.916ms
+// 2^22所消耗的时间为: 1612.145ms
+// 2^23所消耗的时间为: 3145.735ms
+// 2^24所消耗的时间为: 6627.836ms
+// 2^25所消耗的时间为: 14915.355ms
 ```
 > 所以时间复杂度为O(nlogn)的算法，数据规模N 翻倍到 2N，对应消耗的时间也约为 **2 + (log2/logn)** 倍。[n趋近于无穷大则log2/logN趋近于无穷小]
 
