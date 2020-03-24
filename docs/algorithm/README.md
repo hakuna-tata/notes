@@ -163,7 +163,7 @@ TimeConsume()
           arr[n] = rightArr[j];
           j++;
           continue;
-          }
+        }
         if (j >= rightArr.length) {
           arr[n] = leftArr[i];
           i++;
@@ -222,16 +222,13 @@ TimeConsume()
       for(let i = 0; i < arr.length; i++){
         for(let j = i + 1; j < arr.length; j++){
           if(arr[i] > arr[j]){
-            this.swap(arr, i, j)
+            let temp = arr[j];
+            arr[j] = arr[i];
+            arr[i] = temp;
           }
         }
       }
       return arr;
-    },
-    swap: function(arr, i, j){
-      let temp = arr[j];
-      arr[j] = arr[i];
-      arr[i] = temp;
     },
     TimeConsume: function(){
       for(let i = 12; i <= 17; i++){
