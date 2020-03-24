@@ -136,6 +136,18 @@ const generateCode = ( entry ) => {
 将生成的这段代码字符串放在浏览器端执行:
 <img src="/notes/kit/bundler/browserTest.png" style="display:block;margin:0 auto"/>
 
+## 对比使用webpack打包
+``` js
+/**
+ * mode: 'development', // 不压缩
+ * devtool: '' // 去掉sourcemap,模块不会被eval包裹更直观
+ */ 
+webpack --mode development --devtool none index.js --output dist/main.js
+```
+打包构建的main.js如下所示（做了简单的格式化）：
+<img src="/notes/kit/bundler/webpackBundler.png" style="display:block;margin:0 auto"/>
+> __webpack_require__和__webpack_exports__跟上面写的require和exports是不是很相似，详细细节就不多做介绍了。
+
 ## 总结
-当再新建一个dist目录，将这些字符串放在index.js文件里，就跟平日里开发npm run build的效果很相似了。
+上述写的简易打包工具构建完成后新建一个dist目录，再将这些字符串放在main.js文件里，就跟平日里开发npm run build的效果很相似了。
 > 当然这就是个简单玩具工具罢了，只是为了深入阅读webpack有个前置思想准备。
