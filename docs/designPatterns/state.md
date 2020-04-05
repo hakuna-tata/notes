@@ -3,12 +3,191 @@
 
 1. **Promise**
 ``` javascript
-/**
- * 1. Pending
- * 2. Resolved
- * 3. Rejected
- */
-new Promise(/* */)
+const PENDING = "PENDING";
+const RESOLVED = "RESOLVED";
+const REJECTED = "REJECTED";
+
+// 兼容所有 promise ，比如 bluebird , Q 等 
+const resolvePromise = (promise2, x, resolve, reject) => {
+  if(promise2 === x){
+    // x 的值与 promise2 是同一个直接抛错
+    return reject(new TypeError("Chaining cycle detected for promise #<Promise>"))
+  }
+  if((typeof x === "object" && x !== null) || typeof x === "function"){
+    // x 为 promise ,防止第三方 x.then 出错
+    try{
+      let then = x.then;
+      if(typeof then === "function"){
+        // 直接执行 then 方法
+        then.call(x, y => {
+          // y 如果还是一个 promise
+          resolvePromise(promise2, y, resolve, reject); 
+        }, r => {
+          reject(r);
+        })
+      }else{
+        // { then: 123 } 
+        resolve(x);
+      }
+    }catch(e){
+      reject(e);
+    }
+  }else{
+    // x 是普通值
+    resolve(x);
+  }
+}
+
+class Promise{
+  constructor(executor){
+    this.status = PENDING;
+    this.value = undefined;
+    this.reason = undefined;
+    // PENDING 状态回调数组
+    this.onFulfilledCallbacks = [];
+    this.onRejectedCallbacks = [];
+
+    let resolve = (value) => {
+      if(this.status === PENDING){
+        this.status = RESOLVED;
+        this.value = value;
+        this.onFulfilledCallbacks.forEach(fn => fn());
+      }
+    }
+
+    let reject = (reason) => {
+      if(this.status === PENDING){
+        this.status = REJECTED;
+        this.reason = reason;
+        this.onRejectedCallbacks.forEach(fn => fn());
+      }
+    }
+
+    try{
+      executor(resolve, reject);
+    }catch(e){
+      reject(e);
+    }
+  }
+  then(onFulfilled, onRejected){
+    // onFulfilled，onRejected 可选参数，值具有穿透性
+    onFulfilled = typeof onFulfilled === "function" ? onFulfilled : res => res;
+    onRejected = typeof onRejected === "function" ? onRejected : err => {
+      throw err;
+    }
+
+    let promise2 = new Promise((resolve, reject) => {
+      // 同步
+      if(this.status === RESOLVED){
+        setTimeout(() => {
+          try{ // 捕获调用 onFulfilled 时出错
+            let x = onFulfilled(this.value);
+            // x可能是普通值，也可能是 promise (利用 setTimeout 异步取到 promise2 )
+            resolvePromise(promise2, x, resolve, reject);
+          }catch(e){
+            reject(e)
+          }
+        }, 0)   
+      }
+      if(this.status === REJECTED){
+        setTimeout(() => {
+          try{
+            let x = onRejected(this.reason);
+            resolvePromise(promise2, x, resolve, reject);
+          }catch(e){
+            reject(e)
+          }
+        }, 0)  
+      }
+      // new Promise 里有异步操作时候， 执行 then 状态任为 PENDING
+      if(this.status === PENDING){
+        this.onFulfilledCallbacks.push(() => {
+          setTimeout(() => {
+            try{
+              let x = onFulfilled(this.value);
+              resolvePromise(promise2, x, resolve, reject);
+            }catch(e){
+              reject(e)
+            }
+          }, 0)
+        })
+        this.onRejectedCallbacks.push(() => {
+          setTimeout(() => {
+            try{
+              let x = onRejected(this.reason);
+              resolvePromise(promise2, x, resolve, reject);
+            }catch(e){
+              reject(e)
+            }
+          }, 0)
+        })
+      }
+    })
+
+    return promise2;
+  }
+}
+```
+代码测试:
+```js
+let promise1 = new Promise((resolve, reject) => {
+  // resolve("hello")   测试成功
+
+  // reject("error")    测试失败
+
+  // throw new Error("err")  测试抛错
+
+  // setTimeout(() => {
+  //   resolve("hello")   测试异步
+  // })
+
+  resolve(100)
+})
+
+/** 测试同步异步调用 */
+promise1.then(res => {
+  console.log("resolvedData",res)
+}, err => {
+  console.log("rejectedError", err)
+})
+
+
+/** 测试值穿透性 */
+promise1.then().then().then(res => {
+  console.log("penetrateData",res)
+})
+
+/** 测试链式调用 */
+let promise2 = promise1.then(res => {
+  // throw new Error("setTimeout try catch")   测试执行 onFulfilled 抛错
+
+  // return promise2   测试 TypeError 抛错
+
+  // return 1000   测试 x 是一个普通值
+
+  // return new Promise((resolve, reject) => {  
+  //   setTimeout(() => {
+  //     resolve("hello")     测试 x 是一个 promise
+  //   },1000)
+  // })   
+  
+  // return new Promise((resolve, reject) => {
+  //   setTimeout(() => {
+  //     resolve(new Promise((resolve, reject) => {
+  //       resolve("hello")    测试 x.then(onFulfilled, onRejected) onFulfilled 还是一个 promise
+  //     }))
+  //   }, 1000)
+  // })
+})
+
+promise2.then(res => {
+  console.log(res)
+}, err => {
+  console.log(err)
+})
+.then(data => {
+  console.log(data)
+})
 ```
 
 2. **业务场景**
