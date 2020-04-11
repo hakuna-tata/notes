@@ -1,4 +1,4 @@
-//
+// 选择排序
 function selectSort(arr){
   for(let i = 0,len = arr.length; i < len; i++){
     for(let j = i + 1; j < len; j++){
@@ -12,7 +12,7 @@ function selectSort(arr){
   return arr;
 }
 
-// 写法1
+// 插入排序：写法1
 function insertSort(arr){
   for(let i = 1; i < arr.length; i++){
     for(let j = i - 1; j >= 0 && arr[j] > arr[i] ;j--){
@@ -25,7 +25,7 @@ function insertSort(arr){
   return arr;
 }
 
-// 写法2
+// 插入排序：写法2
 function insertSort(arr){
   for(let i = 1; i < arr.length; i++){
     let temp = arr[i], j;
@@ -37,7 +37,7 @@ function insertSort(arr){
   return arr;
 }
 
-//
+// 冒泡排序
 function bubbleSort(arr){
   for(let i = 0; i < arr.length - 1; i++){
     for(let j = 0; j < arr.length - 1 - i; j++){
@@ -51,36 +51,36 @@ function bubbleSort(arr){
   return arr;
 }
 
-// 写法1(自顶向下)left = 0  right = arr.length - 1
+// 归并排序：写法1(自顶向下)left = 0  right = arr.length - 1
 function mergeSort(arr, left, right){
   function merge(arr, l, m, r){
     let leftArr = [];
-      let rightArr = [];
-      for(let i = l; i <= m; i++) {
-        leftArr.push(arr[i]);
+    let rightArr = [];
+    for(let i = l; i <= m; i++) {
+      leftArr.push(arr[i]);
+    }
+    for(let j = m+1; j <= r; j++) {
+      rightArr.push(arr[j]);
+    }
+    let i = 0 , j = 0;
+    for(let k = l; k <= r; k++){
+      if (i >= leftArr.length) {
+        arr[k] = rightArr[j];
+        j++;
       }
-      for(let j = m+1; j <= r; j++) {
-        rightArr.push(arr[j]);
+      else if (j >= rightArr.length) {
+        arr[k] = leftArr[i];
+        i++;
       }
-      let i = 0 , j = 0;
-      for(let k = l; k <= r; k++){
-        if (i >= leftArr.length) {
-          arr[k] = rightArr[j];
-          j++;
-        }
-        else if (j >= rightArr.length) {
-          arr[k] = leftArr[i];
-          i++;
-        }
-        else if(leftArr[i] > rightArr[j]){
-          arr[k] = rightArr[j];
-          j++
-        }
-        else{
-          arr[k] = leftArr[i];
-          i++;
-        }
+      else if(leftArr[i] > rightArr[j]){
+        arr[k] = rightArr[j];
+        j++
       }
+      else{
+        arr[k] = leftArr[i];
+        i++;
+      }
+    }
   }
   if(left >= right) return;
   let mid = Math.floor((left + right) / 2);
@@ -91,7 +91,7 @@ function mergeSort(arr, left, right){
   }
 }
 
-// 写法2(自底向上) n = arr.length
+// 归并排序：写法2(自底向上) n = arr.length
 function mergeSort(arr, n){
   function merge(arr, l, m, r){
     let leftArr = [];
@@ -129,16 +129,57 @@ function mergeSort(arr, n){
   }
 }
 
-// 
-function quickSort(arr, n){
+// 快速排序（有序或者重复元素过多就会造成O(n^2)复杂度）
+function quickSort(arr){
+  function swap(arr, i, j){
+    let temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+    return arr;
+  }
+  function _partition(arr, l, r){
+    debugger
+    let temp = arr[l];
+    let j = l;
+    for(let i = j + 1; i <= r; i++){
+      if(arr[i] < temp){
+        swap(arr, j+1, i);
+        j++;
+      }
+    }
+    swap(arr, l, j);
+    return j
+  }
+  function _quickSort(arr, l, r){
+    if( l >= r) return;
+    let p = _partition(arr, l, r);
+    _quickSort(arr, l, p - 1);
+    _quickSort(arr, p + 1, r);
+  }
+  _quickSort(arr, 0, arr.length - 1)
+  return arr
+}
+
+// 快速排序：双路
+function quickSort(arr){
+  function swap(arr, i, j){
+    let temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+    return arr;
+  }
   function _partition(arr, l, r){
     let temp = arr[l];
-    let i, j = l + 1, r;
+    let i = l + 1, j = r;
     while(true){
       while(i <= r && arr[i] < temp) i++;
-      while(j >= l + 1 && arr[j] > temp) j--;
+      while(j >= l+1 && arr[j] > temp) j--;
       if(i > j) break;
+      swap(arr, i, j);
+      i++;
+      j--;
     }
+    swap(arr, l, j);
     return j;
   }
   function _quickSort(arr, l, r){
@@ -147,4 +188,39 @@ function quickSort(arr, n){
     _quickSort(arr, l, p - 1);
     _quickSort(arr, p + 1, r);
   }
+  _quickSort(arr, 0, arr.length - 1)
+  return arr
+}
+
+// 快速排序：三路
+function quickSort(arr){
+  function swap(arr, i, j){
+    let temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+    return arr;
+  }
+  function _quickSort(arr, l, r){
+    if( l >= r) return;
+    
+    let temp = arr[l];
+    let lt = l, gt = r + 1, i = l + 1;
+    while(i < gt){
+      if(arr[i] < temp){
+        swap(arr, i, lt + 1);
+        lt++;
+        i++
+      }else if(arr[i] > temp){
+        swap(arr, i, gt - 1)
+        gt--;
+      }else{
+        i++
+      }
+    }
+    swap(arr, l, lt);
+    _quickSort(arr, l, lt - 1);
+    _quickSort(arr, gt, r);
+  }
+  _quickSort(arr, 0, arr.length - 1)
+  return arr
 }
