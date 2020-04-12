@@ -127,6 +127,7 @@ function mergeSort(arr, n){
       merge(arr, i, i + sz -1, Math.min(i + sz + sz - 1, n - 1))
     }
   }
+  return arr;
 }
 
 // 快速排序（有序或者重复元素过多就会造成O(n^2)复杂度）
@@ -223,4 +224,88 @@ function quickSort(arr){
   }
   _quickSort(arr, 0, arr.length - 1)
   return arr
+}
+
+// 堆排序
+const shiftUp = Symbol('shiftUp');
+const shiftDown = Symbol('shiftDown');
+
+class MaxHeap{
+  constructor(arr){
+    this.arr = arr;
+    this.buildMaxHeap(arr);
+  }
+  // 创建堆
+  [shiftUp](k){
+    while(k > 0 && this.arr[Math.floor((k-1) / 2)] < this.arr[k]){
+      this.swap(this.arr, Math.floor((k-1) / 2), k);
+      k = Math.floor((k-1) / 2);
+    }
+  }
+  // 调整堆
+  [shiftDown](k, len){
+    while(2*k + 1 <= len){
+      let j = 2*k + 1;
+      if(j + 1 <= len && this.arr[j+1] > this.arr[j]) j += 1;
+      if(this.arr[k] >= this.arr[j]) break;
+      this.swap(this.arr, k, j);
+      k = j;
+    }
+  }
+  swap(arr, i, j){
+    let temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+  // 插入元素一个一个调整
+  buildMaxHeap(arr){
+    for(let i = 0; i < arr.length; i++){
+      this[shiftUp](i);
+    }
+  }
+  // 取出根节点最大值
+  extractMax(){
+    if(this.arr.length){
+      this.swap(this.arr, 0, this.arr.length - 1);
+      console.log(this.arr.pop())
+      this[shiftDown](0, this.arr.length - 1)
+    }
+  }
+}
+
+// 堆排序：优化
+const shiftDown = Symbol('shiftDown');
+
+class MaxHeap{
+  constructor(arr){
+    this.arr = arr;
+    this.buildMaxHeap(arr);
+  }
+  [shiftDown](k, len){
+    while(2*k + 1 <= len){
+      let j = 2*k + 1;
+      if(j + 1 <= len && this.arr[j+1] > this.arr[j]) j += 1;
+      if(this.arr[k] >= this.arr[j]) break;
+      this.swap(this.arr, k, j);
+      k = j;
+    }
+  }
+  swap(arr, i, j){
+    let temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+  // 直接从非叶子节点开始调整
+  buildMaxHeap(arr){
+    for(let i = Math.floor((arr.length - 1) / 2); i >= 0; i--){
+      this[shiftDown](i, arr.length - 1)
+    }
+  }
+  extractMax(){
+    if(this.arr.length){
+      this.swap(this.arr, 0, this.arr.length - 1);
+      console.log(this.arr.pop())
+      this[shiftDown](0, this.arr.length - 1)
+    }
+  }
 }

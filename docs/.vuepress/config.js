@@ -32,8 +32,7 @@ module.exports = {
           title: '算法与数据结构',
           collapsable: false, 
           children:[
-            ['','算法和算法分析'],
-            ['link','链表']
+            ['','算法和算法分析']
           ]
         }
       ],
