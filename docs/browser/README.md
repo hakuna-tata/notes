@@ -58,3 +58,47 @@
   > 上述4个宏观步骤很好的解释了为什么在浏览器的地址栏里面输入url地址后，之前的页面不会立马消失，而是要加载一会儿才会更新页面。
 
 5. **渲染阶段**
+  - 5 - 1 构建DOM树（浏览器无法直接理解和使用HTML，所以需要将HTML转换为浏览器能够理解的结构--DOM树）
+  - 5 - 2 样式计算（浏览器无法理解这些纯文本的CSS样式，所以当渲染引擎接收到CSS文本时，会执行转换操作，将CSS文本转换为浏览器可以理解的结构--styleSheets）
+  > 浏览器控制台输入document.styleSheets测试计算出DOM树所有节点的样式
+
+  <img src="/notes/browser/styleSheets.png" style="display:block;margin:0 auto"/>
+
+  - 5 - 3 创建布局树Layout（生成完DOM树和DOM样式，接下来就需要计算出DOM树中可见元素的几何位置，生成一颗只包含可见元素的布局树）
+  - 5 - 4 对布局树进行分层Layer，特定的节点生成专用的图层，并生成一棵对应的图层树（position：fixed，z-index, opacity, filter等）
+  - 5 - 5 渲染引擎对图层树中的每个图层进行绘制，生成绘制列表（绘制列表中的指令非常简单，就是让其执行⼀个简单的绘制操作，当图层的绘制列表准备好之后，主线程会把该绘制列表提交给合成线程）
+  - 5 - 6 合成线程将图层分层图块tile，并在光栅格化raster线程池中将图块转换成位图
+  > 在有些情况下，有的图层可以很⼤，比如有的页面使⽤滚动条要滚动好久才能滚动到底部，但是通过视口，用户只能看到⻚⾯的很小⼀部分，所以在这种情况下，要绘制出所有图层内容的话，就会产⽣太⼤的开销，⽽且也没有必要。 基于这个原因
+  > **合成线程会将图层划分为图块tile,通过栅格化操作，按照视口附近的图块优先生成位图**
+
+  - 5 - 7 合成线程发送绘制图块命令DrawQuad给浏览器进程
+  - 5 - 8 浏览器进程根据DrawQuad消息生成页面，并显示到显示器上
+  > 使用极客时间李兵老师《浏览器工作原理与实践》中完整的渲染流水线示意图总结一下
+
+   <img src="/notes/browser/detailRender.png" style="display:block;margin:0 auto"/>
+
+## 重排 重绘 合成
+
+1. **重排：更新了元素的几何属性**
+> 如果JS或者CSS修改某些元素的几何位置属性，例如修改宽度，高度等，渲染引擎会触发重新布局，解析一系列子阶段。
+
+<img src="/notes/browser/reflow.png" style="display:block;margin:0 auto"/>
+
+
+2. **重绘：更新元素的绘制属性**
+> 如果JS或者CSS修改某些元素的背景颜色等，渲染引擎将省去了布局和分层阶段，所以执行效率会比重排操作要高些。
+
+<img src="/notes/browser/repaint.png" style="display:block;margin:0 auto"/>
+
+3. **合成：直接合成阶段**
+> 如果更改一个既不用布局也不要绘制的属性，渲染引擎将跳过布局和绘制，只执行后续的合成操作，相对于重排和重绘，合成能大大提升绘制效率。
+
+<img src="/notes/browser/merge.png" style="display:block;margin:0 auto"/>
+
+**减少重排重绘方法：**
+- 使用 class 操作样式，而不是频繁操作 style
+- 避免使用 table 布局
+- 批量操作 dom，例如 createDocumentFragment，使用React，Vue框架等
+- Debounce window resize 事件
+- will-change: transform，opacity 做优化
+- 对 dom 属性的读写要分离

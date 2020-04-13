@@ -53,15 +53,15 @@ HTTP劫持的防御：
 > HTTPS传输协议即在HTTP传输数据过程中对报文进行加密（SSL/TLS）。一般来说全站上HTTPS能防止大部分劫持，但是HTTPS并不一定是绝对安全的，加密的数据也是可以被劫持的。
 
 HTTPS原理：
-1. **对称加密技术**  
+1. **对称加密技术（AES DES RC4等）**  
 - 算法f，服务端和客户端共享相同的秘钥k，以及需要传送的数据:
   <img src="/notes/webSecurity/network/symmetric.png" style="display:block;margin:0 auto"/>
-> 可以发现只用对称加密数据是不可取的，秘钥k值太多对管理是个噩梦，k值唯一则攻击者轻易解密数据。
+> 可以发现只用对称加密<code>[ 1 v 1 ]</code>数据是不可取的，秘钥k值太多对管理是个噩梦，k值唯一则攻击者轻易解密数据。
 
-2. **非对称加密技术**
+2. **非对称加密技术（RSA ECC DH等）**
 - 算法f,公开秘钥ek,私有秘钥dk,以及需要传送的数据：
   <img src="/notes/webSecurity/network/public-key.png" style="display:block;margin:0 auto"/>
-> 可以发现非对称加密数据客户端向服务端传输是安全的，但是服务端向客户端传输是不安全。
+> 可以发现非对称加密<code>[ 1 v N ]</code>数据客户端向服务端传输是安全的，但是服务端向客户端传输是不安全。
   
 3. **对称加密+非对称加密**
   <img src="/notes/webSecurity/network/mix.png" style="display:block;margin:0 auto"/>
@@ -72,10 +72,17 @@ HTTPS原理：
   <img src="/notes/webSecurity/network/CA.png" style="display:block;margin:0 auto"/>
 > 可以发现客服端和服务端换协商出一个用于后面对称加密的密钥。但是协商密钥的生成需要客户端和服务端明文信息，所以正常情况下中间人获取不到对称加密秘钥k。
 
-5. **密钥协商的过程中，交换的并不是密钥，而是生成秘钥用的信息**
-- 运用网上一张解释秘钥协商过程的宏观图
+5. **密钥协商（TLS握手）最终是通过散列算法（SHA MD5）生成会话秘钥**
+- 运用网上一张解释秘钥协商过程 Diffie-Hellman算法 宏观图
   <img src="/notes/webSecurity/network/associate.png" style="display:block;margin:0 auto"/>
-> 最终协商出的秘钥k，是客户端和服务端对交换的信息分别进行hash认证，认证成功则对交换信息过程中传输的随机数用约定的算法计算得到秘钥k（信息未被篡改则双方秘钥k肯定是相同的。
+
+协商过程大概就是：
+>  1. A选择一个通用颜色蓝色，并将蓝色发给B;    
+>  2. A选择自己的私密黄色，B选择自己的私密红色;  
+>  3. A使用蓝色和私密黄色生成混合色A，并将混合色A发给B;B也通过蓝色和私密红色生成混合色B，然后将混合色B发给A;
+>  4. 最后A能够使用私密黄色A和混合色B通过hash散列算法得到紫色会话密钥;B能够使用私密红色B和混合色A通过hash散列算法得到紫色会话密钥。
+
+>可以发现客户端和服务端双方并不需要互相传递私密的信息，可以有效地防止通讯过程被篡改偷窥（中间人即使劫持也无法获得最终的秘钥）。
 
 HTTPS劫持：
 1. **攻击SSL/TLS握手过程**
