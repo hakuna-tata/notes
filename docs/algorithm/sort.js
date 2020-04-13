@@ -264,12 +264,13 @@ class MaxHeap{
     }
   }
   // 取出根节点最大值
-  extractMax(){
-    if(this.arr.length){
-      this.swap(this.arr, 0, this.arr.length - 1);
-      console.log(this.arr.pop())
-      this[shiftDown](0, this.arr.length - 1)
+  heapSort(){
+    let ret = [];
+    for(let i = this.arr.length - 1; i >= 0; i--){
+      this.swap(this.arr, 0, i);
+      this[shiftDown](0, i - 1);
     }
+    return this.arr;
   }
 }
 
@@ -298,14 +299,15 @@ class MaxHeap{
   // 直接从非叶子节点开始调整
   buildMaxHeap(arr){
     for(let i = Math.floor((arr.length - 1) / 2); i >= 0; i--){
-      this[shiftDown](i, arr.length - 1)
+      this[shiftDown](i, arr.length - 1);
     }
   }
-  extractMax(){
-    if(this.arr.length){
-      this.swap(this.arr, 0, this.arr.length - 1);
-      console.log(this.arr.pop())
-      this[shiftDown](0, this.arr.length - 1)
+  heapSort(){
+    let ret = [];
+    for(let i = this.arr.length - 1; i >= 0; i--){
+      this.swap(this.arr, 0, i);
+      this[shiftDown](0, i - 1);
     }
+    return this.arr;
   }
 }
