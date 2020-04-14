@@ -128,67 +128,7 @@ class Promise{
   }
 }
 ```
-代码测试:
-```js
-let promise1 = new Promise((resolve, reject) => {
-  // resolve("hello")   测试成功
-
-  // reject("error")    测试失败
-
-  // throw new Error("err")  测试抛错
-
-  // setTimeout(() => {
-  //   resolve("hello")   测试异步
-  // })
-
-  resolve(100)
-})
-
-/** 测试同步异步调用 */
-promise1.then(res => {
-  console.log("resolvedData",res)
-}, err => {
-  console.log("rejectedError", err)
-})
-
-
-/** 测试值穿透性 */
-promise1.then().then().then(res => {
-  console.log("penetrateData",res)
-})
-
-/** 测试链式调用 */
-let promise2 = promise1.then(res => {
-  // throw new Error("setTimeout try catch")   测试执行 onFulfilled 抛错
-
-  // return promise2   测试 TypeError 抛错
-
-  // return 1000   测试 x 是一个普通值
-
-  // return new Promise((resolve, reject) => {  
-  //   setTimeout(() => {
-  //     resolve("hello")     测试 x 是一个 promise
-  //   },1000)
-  // })   
-  
-  // return new Promise((resolve, reject) => {
-  //   setTimeout(() => {
-  //     resolve(new Promise((resolve, reject) => {
-  //       resolve("hello")    测试 x.then(onFulfilled, onRejected) onFulfilled 还是一个 promise
-  //     }))
-  //   }, 1000)
-  // })
-})
-
-promise2.then(res => {
-  console.log(res)
-}, err => {
-  console.log(err)
-})
-.then(data => {
-  console.log(data)
-})
-```
+[Promise/A+规范实现代码测试](https://github.com/hakuna-tata/Promise)
 
 2. **业务场景**
 ``` javascript
