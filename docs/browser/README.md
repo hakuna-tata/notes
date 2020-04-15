@@ -65,7 +65,12 @@
   <img src="/notes/browser/styleSheets.png" style="display:block;margin:0 auto"/>
 
   - 5 - 3 创建布局树Layout（生成完DOM树和DOM样式，接下来就需要计算出DOM树中可见元素的几何位置，生成一颗只包含可见元素的布局树）
-  - 5 - 4 对布局树进行分层Layer，特定的节点生成专用的图层，并生成一棵对应的图层树（position：fixed，z-index, opacity, filter等）
+  - 5 - 4 对布局树进行分层Layer，特定的节点生成专用的图层，并生成一棵对应的图层树
+  > 一般满足以下情况渲染引擎会为特定节点创建新图层：  
+  >1. 拥有3D变换的CSS属性（translate3d）
+  >2. 拥有CSS加速属性的元素（will-change） 
+  >3. 拥有CSS3动画元素的节点
+
   - 5 - 5 渲染引擎对图层树中的每个图层进行绘制，生成绘制列表（绘制列表中的指令非常简单，就是让其执行⼀个简单的绘制操作，当图层的绘制列表准备好之后，主线程会把该绘制列表提交给合成线程）
   - 5 - 6 合成线程将图层分层图块tile，并在光栅格化raster线程池中将图块转换成位图
   > 在有些情况下，有的图层可以很⼤，比如有的页面使⽤滚动条要滚动好久才能滚动到底部，但是通过视口，用户只能看到⻚⾯的很小⼀部分，所以在这种情况下，要绘制出所有图层内容的话，就会产⽣太⼤的开销，⽽且也没有必要。 基于这个原因
@@ -84,21 +89,22 @@
 
 <img src="/notes/browser/reflow.png" style="display:block;margin:0 auto"/>
 
-
-2. **重绘：更新元素的绘制属性**
+2. **重绘：更新元素的绘制属性**  
 > 如果JS或者CSS修改某些元素的背景颜色等，渲染引擎将省去了布局和分层阶段，所以执行效率会比重排操作要高些。
 
 <img src="/notes/browser/repaint.png" style="display:block;margin:0 auto"/>
+
+> **TIPS：重绘以图层为单位，如果图层中某个元素需要重绘，那么整个图层都需要重绘。所以有gif图，动画等节点最好给此节点开启一个属于自己的图层**
 
 3. **合成：直接合成阶段**
 > 如果更改一个既不用布局也不要绘制的属性，渲染引擎将跳过布局和绘制，只执行后续的合成操作，相对于重排和重绘，合成能大大提升绘制效率。
 
 <img src="/notes/browser/merge.png" style="display:block;margin:0 auto"/>
 
+
 **减少重排重绘方法：**
-- 使用 class 操作样式，而不是频繁操作 style
 - 避免使用 table 布局
 - 批量操作 dom，例如 createDocumentFragment，使用React，Vue框架等
-- Debounce window resize 事件
 - will-change: transform，opacity 做优化
-- 对 dom 属性的读写要分离
+- 使用 class 操作样式，而不是频繁操作 style
+- ......
