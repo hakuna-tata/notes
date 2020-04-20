@@ -225,7 +225,7 @@ function quickSort(arr){
   return arr
 }
 
-// 堆排序
+// 堆排序（完全二叉树）
 const shiftUp = Symbol('shiftUp');
 const shiftDown = Symbol('shiftDown');
 
