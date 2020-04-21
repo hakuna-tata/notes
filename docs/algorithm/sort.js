@@ -139,7 +139,6 @@ function quickSort(arr){
     return arr;
   }
   function _partition(arr, l, r){
-    debugger
     let temp = arr[l];
     let j = l;
     for(let i = j + 1; i <= r; i++){
@@ -226,7 +225,7 @@ function quickSort(arr){
   return arr
 }
 
-// 堆排序
+// 堆排序（完全二叉树）
 const shiftUp = Symbol('shiftUp');
 const shiftDown = Symbol('shiftDown');
 
@@ -265,7 +264,6 @@ class MaxHeap{
   }
   // 取出根节点最大值
   heapSort(){
-    let ret = [];
     for(let i = this.arr.length - 1; i >= 0; i--){
       this.swap(this.arr, 0, i);
       this[shiftDown](0, i - 1);
@@ -303,11 +301,54 @@ class MaxHeap{
     }
   }
   heapSort(){
-    let ret = [];
     for(let i = this.arr.length - 1; i >= 0; i--){
       this.swap(this.arr, 0, i);
       this[shiftDown](0, i - 1);
     }
     return this.arr;
+  }
+}
+
+// 索引堆(比较data，构建成堆的却是index)
+const shiftUp = Symbol('shiftUp');
+const shiftDown = Symbol('shiftDown');
+
+class IndexMaxHeap{
+  constructor(arr){
+    this.data = [];
+    this.indexes = [];
+    this.buildMaxIndexHeap(arr);
+  }
+  [shiftUp](k){
+    while(k > 0 && this.data[this.indexes[Math.floor((k-1) / 2)]] < this.data[this.indexes[k]]){
+      this.swap(this.indexes, Math.floor((k-1) / 2), k);
+      k = Math.floor((k-1) / 2);
+    }
+  }
+  [shiftDown](k, len){
+    while(2*k + 1 < len){
+      let j = 2*k + 1;
+      if(j + 1 < len && this.data[this.indexes[j+1]] > this.data[this.indexes[j]]) j += 1;
+      if(this.data[this.indexes[k]] >= this.data[this.indexes[j]]) break;
+      this.swap(this.indexes, k, j);
+      k = j;
+    }
+  }
+  swap(arr, i, j){
+    let temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+  buildMaxIndexHeap(arr){
+    for(let i = 0; i < arr.length; i++){
+      this.data[i] = arr[i];
+      this.indexes[i] = i;
+      this[shiftUp](i);
+    }
+  }
+  extractMax(){
+    this.swap(this.indexes, 0, this.indexes.length - 1);
+    console.log(this.data[this.indexes.pop()]);
+    this[shiftDown](0, this.indexes.length);
   }
 }

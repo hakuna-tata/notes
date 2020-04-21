@@ -41,7 +41,9 @@ module.exports = {
           title: '计算机网络',
           collapsable: false, 
           children:[
-            ['','概述']
+            ['','概述'],
+            ['networkLayer','网络层'],
+            ['transportLayer','传输层']
           ]
         }
       ],
