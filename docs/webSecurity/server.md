@@ -144,4 +144,8 @@
 ## 拒绝服务攻击
 > 拒绝服务攻击英文翻译为DoS（Denial of Service）。一般指的是利用合理的请求造成资源过载（发送大量数据包），导致服务不可用。
 
-- 缺少网络层，应用层DDoS实践经验，未来补充
+1. **SYN Flood 攻击**
+
+2. **Land 攻击**
+
+[攻击原理在计算机网络传输层三次握手里有做解释](../network/transportLayer.html#tcp-%E7%9A%84%E4%BC%A0%E8%BE%93%E8%BF%9E%E6%8E%A5%E7%AE%A1%E7%90%86)
