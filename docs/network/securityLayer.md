@@ -10,6 +10,8 @@
 ## TLS 1.2 握手过程
 1. **Wireshark抓包TLS：**
 
-    <img src="/notes/network/securityLayer/wireshark-tls.png" style="display:block;margin:0 auto"/>
+  <img src="/notes/network/securityLayer/wireshark-tls.png" style="display:block;margin:0 auto"/>
 
 2. **握手过程：**
+
+  <img src="/notes/network/securityLayer/sharkhand-tls.png" style="display:block;margin:0 auto"/>
