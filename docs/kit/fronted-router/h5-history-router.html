@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>h5-history-router</title>
+</head>
+<body>
+  <!--正常页面浏览会刷新页面。 h5-history 需要做到跳转不刷新页面， SPA必需的特点-->
+  <button id="btn">修改 url</button>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('load', location.pathname)
+    })
+
+    // 打开一个新路由。用 pushState 方式，浏览器不会刷新页面
+    document.getElementById('btn').addEventListener('click', () => {
+      const state = { name: 'page1'}
+      console.log('切换路由到', 'page1')
+      history.pushState(state, '', 'page1')
+    })
+
+    // 监听浏览器前进，后退
+    window.onpopstate = (event) => {
+      console.log('onpopstate', event.state, location.pathname)
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hash-router</title>
+</head>
+<body>
+  <!-- hash 变化会触发网页跳转，即浏览器的前进后退 -->
+  <!-- hash 变化不会刷新页面，SPA 必需的特点 -->
+  <!-- hash 永远不会提交到 server 端 -->
+  <button id="btn">修改 hash</button>
+  <script>
+    /*
+    * 1. JS 修改 url
+    * 2. 手动修改 url
+    * 3. 浏览器前进后退
+    */
+    window.onhashchange = (event) => {
+      console.log('old url:', event.oldURL);
+      console.log('new url:', event.newURL);
+      console.log('hash url:', location.hash);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('hash url:', event.hash);
+    })
+
+    document.getElementById('btn').addEventListener('click', () => {
+      location.href = '#user'
+    })
+  </script>
+</body>
+</html>
