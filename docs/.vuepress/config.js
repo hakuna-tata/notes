@@ -14,7 +14,6 @@ module.exports = {
   themeConfig: {
     repo: 'hakuna-tata/notes/',
     nav: [
-      { text: '算法与数据结构', link: '/algorithm/' },
       { text: '计算机网络', link: '/network/' },
       { text: '设计模式', link: '/designPatterns/' },
       {   
@@ -27,15 +26,6 @@ module.exports = {
       }
     ],
     sidebar:{
-      '/algorithm/':[
-        {
-          title: '算法与数据结构',
-          collapsable: false, 
-          children:[
-            ['','算法和算法分析']
-          ]
-        }
-      ],
       '/network/':[
         {
           title: '计算机网络',
