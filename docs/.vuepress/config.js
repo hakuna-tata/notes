@@ -15,6 +15,7 @@ module.exports = {
     repo: 'hakuna-tata/notes/',
     nav: [
       { text: '计算机网络', link: '/network/' },
+      { text: 'Docker', link: '/docker/' },
       { text: '设计模式', link: '/designPatterns/' },
       {   
         text: 'Web系列',
