@@ -14,8 +14,8 @@ module.exports = {
   themeConfig: {
     repo: 'hakuna-tata/notes/',
     nav: [
-      { text: '计算机网络', link: '/network/' },
-      { text: 'Docker', link: '/docker/' },
+      { text: '计算机网络', link: '/network/networkLayer' },
+      { text: 'Docker', link: '/docker/network' },
       { text: '设计模式', link: '/designPatterns/' },
       {   
         text: 'Web系列',
@@ -32,10 +32,19 @@ module.exports = {
           title: '计算机网络',
           collapsable: false, 
           children:[
-            ['','概述'],
             ['networkLayer','网络层'],
             ['transportLayer','传输层'],
             ['securityLayer', '安全层']
+          ]
+        }
+      ],
+      '/docker/': [
+        {
+          title: 'Docker 笔记',
+          collapsable: false,
+          children:[
+            ['network', 'Docker 网络'],
+            ['compose', 'Docker 多容器']
           ]
         }
       ],
