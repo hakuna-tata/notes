@@ -144,7 +144,54 @@ lo        Link encap:Local Loopback
 > 用途： 如果容器内的网络并不是希望永远跟主机是隔离的，有些基础业务需要创建或更新主机的网络配置，所以主机网络模式运行的容器才能够修改主机网络。
 
 ## container 网络模式
+> container 网络模式允许一个容器共享另一个容器的网络命名空间，当两个容器需要共享网络，但其他资源仍然需要隔离时就可以使用 container 网络模式。
 
+**验证：**
+- 创建一个默认桥接模式的容器
+```
+[root@liujianfeng ~]# docker run -it --name=testContNet my_ecs:v1
+[root@2ba964a1f6db /]# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+44: eth0@if45: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP 
+    link/ether 02:42:ac:11:00:03 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.3/16 brd 172.17.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+```
+- 再启动一个 testContNet2 容器，通过 container 网络模式连接到 testContNet 容器的网络
+```
+[root@liujianfeng ~]# docker run -it --name=testContNet2 --net=container:testContNet my_ecs:v1
+
+// 宿主机中
+[root@liujianfeng ~]# docker container ls
+CONTAINER ID        IMAGE               COMMAND               CREATED              STATUS              PORTS                  NAMES       
+97a0796b38c0        my_ecs:v1           "/bin/bash"           About a minute ago   Up 4 seconds                               testContNet2
+2ba964a1f6db        my_ecs:v1           "/bin/bash"           30 minutes ago       Up 4 minutes                               testContNet 
+77ac5db8347b        1a24cd5f36de        "/usr/sbin/sshd -D"   6 weeks ago          Up 6 weeks          0.0.0.0:2222->22/tcp   my_ecs       
+
+[root@liujianfeng ~]# docker exec -it 97a0796b38c0 ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+46: eth0@if47: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP 
+    link/ether 02:42:ac:11:00:03 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.3/16 brd 172.17.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+
+[root@liujianfeng ~]# docker exec -it 2ba964a1f6db ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+44: eth0@if45: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP 
+    link/ether 02:42:ac:11:00:03 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.3/16 brd 172.17.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+```
+> 用途：两个容器之间需要直接通过 localhost 通信，一般用于网络接管或者代理场景
 
 ## bridge 桥接模式
 >  Docker 本地网络实现利用了 Linux 的 Network Namespace 和 Virtual Ethernet Pair (veth pair)
