@@ -1,9 +1,190 @@
 ## 概述
-Docker 网络中比较典型的网络模式有以下四种，这四种网络模式基本满足单机容器的所有场景。    
-- **1. null 空网络模式**  
-- **2. host 主机网络模式**  
-- **3. container 网络模式**   
-- **4. bridge 桥接模式**
+Docker 网络中比较典型的网络模式有以下四种，这四种网络模式基本满足单机容器的所有场景。  
+- **1. bridge 桥接模式**    
+- **2. null 空网络模式**  
+- **3. host 主机网络模式**  
+- **4. container 网络模式**   
+
+## bridge 桥接模式
+>  Docker 的 bridge 网络是启动容器默认的网络模式，bridge 网络可以实现容器与容器的互通，也可以实现主机与容器的互通。 
+
+
+### （桥接模式原理）实验两个 Net Namespace PING通：
+1. 使用 Linux 的 Net Namespace（创建删除）创建两个 Net Namespace，创建一个默认网络模式的容器时就相当于拥有一个独立的 Net Namespace
+```shell
+[root@liujianfeng ~]# ip netns list
+[root@liujianfeng ~]# ip netns add test1
+[root@liujianfeng ~]# ip netns add test2
+[root@liujianfeng ~]# ip netns list
+test2
+test1
+[root@liujianfeng ~]# ip netns delete test2
+[root@liujianfeng ~]# ip netns add test3
+[root@liujianfeng ~]# ip netns list
+test3
+test1
+[root@liujianfeng ~]# ip netns exec test1 ip a
+1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+[root@liujianfeng ~]# ip netns exec test3 ip a
+1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+```
+2. 发现每个 Net Namespace 的本地回环端口是 DOWN 的状态，然后将它们 UP 起来
+```shell
+[root@liujianfeng ~]# ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:52:32:88 brd ff:ff:ff:ff:ff:ff
+3: docker0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default
+    link/ether 02:42:f5:85:32:6a brd ff:ff:ff:ff:ff:ff
+25: vethc0dc853@if24: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether fa:0c:1a:d1:2b:8e brd ff:ff:ff:ff:ff:ff link-netnsid 0
+
+[root@liujianfeng ~]# ip netns exec test1 ip link set dev lo up
+[root@liujianfeng ~]# ip netns exec test3 ip link set dev lo up
+[root@liujianfeng ~]# ip netns exec test1 ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+[root@liujianfeng ~]# ip netns exec test3 ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+```
+
+3. 使用 Linux veth(虚拟设备接口，成对出现)，将成对接口分别添加到 test1 和 test2 两个 Net Namespace 
+```shell
+[root@liujianfeng ~]# ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:52:32:88 brd ff:ff:ff:ff:ff:ff
+3: docker0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default
+    link/ether 02:42:f5:85:32:6a brd ff:ff:ff:ff:ff:ff
+25: vethc0dc853@if24: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether fa:0c:1a:d1:2b:8e brd ff:ff:ff:ff:ff:ff link-netnsid 0
+
+// 在宿主机上增加两个 veth 接口
+[root@liujianfeng ~]# ip link add veth-test1 type veth peer name veth-test3
+[root@liujianfeng ~]# ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:52:32:88 brd ff:ff:ff:ff:ff:ff
+3: docker0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default
+    link/ether 02:42:f5:85:32:6a brd ff:ff:ff:ff:ff:ff
+25: vethc0dc853@if24: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether fa:0c:1a:d1:2b:8e brd ff:ff:ff:ff:ff:ff link-netnsid 0
+48: veth-test3@veth-test1: <BROADCAST,MULTICAST,M-DOWN> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000       
+    link/ether e6:48:d1:75:76:36 brd ff:ff:ff:ff:ff:ff
+49: veth-test1@veth-test3: <BROADCAST,MULTICAST,M-DOWN> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000       
+    link/ether ae:e5:c9:07:b4:f5 brd ff:ff:ff:ff:ff:ff
+
+// 将两个接口分别添加到两个 Net Namespace 中
+[root@liujianfeng ~]# ip link set veth-test1 netns test1
+[root@liujianfeng ~]# ip link set veth-test3 netns test3
+
+[root@liujianfeng ~]# ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:52:32:88 brd ff:ff:ff:ff:ff:ff
+3: docker0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default
+    link/ether 02:42:f5:85:32:6a brd ff:ff:ff:ff:ff:ff
+25: vethc0dc853@if24: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether fa:0c:1a:d1:2b:8e brd ff:ff:ff:ff:ff:ff link-netnsid 0
+
+[root@liujianfeng ~]# ip netns exec test1 ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000      
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+49: veth-test1@if48: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether ae:e5:c9:07:b4:f5 brd ff:ff:ff:ff:ff:ff link-netnsid 1
+[root@liujianfeng ~]# ip netns exec test3 ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000      
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+48: veth-test3@if49: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether e6:48:d1:75:76:36 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+
+// 将两个端口 UP
+[root@liujianfeng ~]# ip netns exec test1 ip link set dev veth-test1 up
+[root@liujianfeng ~]# ip netns exec test3 ip link set dev veth-test3 up
+[root@liujianfeng ~]# ip netns exec test1 ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+49: veth-test1@if48: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether ae:e5:c9:07:b4:f5 brd ff:ff:ff:ff:ff:ff link-netnsid 1
+[root@liujianfeng ~]# ip netns exec test3 ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+48: veth-test3@if49: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether e6:48:d1:75:76:36 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+```
+4. 给两个端口分别添加 ip 地址，使两个  Net Namespace 可以互相通信
+```shell
+[root@liujianfeng ~]# ip netns exec test1 ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+49: veth-test1@if48: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether ae:e5:c9:07:b4:f5 brd ff:ff:ff:ff:ff:ff link-netnsid 1
+    inet6 fe80::ace5:c9ff:fe07:b4f5/64 scope link
+       valid_lft forever preferred_lft forever
+[root@liujianfeng ~]# ip netns exec test3 ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+48: veth-test3@if49: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether e6:48:d1:75:76:36 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet6 fe80::e448:d1ff:fe75:7636/64 scope link
+       valid_lft forever preferred_lft forever
+
+[root@liujianfeng ~]# ip netns exec test1 ip addr add 172.17.0.7/16 dev veth-test1
+[root@liujianfeng ~]# ip netns exec test3 ip addr add 172.17.0.8/16 dev veth-test3
+[root@liujianfeng ~]# ip netns exec test1 ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+49: veth-test1@if48: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether ae:e5:c9:07:b4:f5 brd ff:ff:ff:ff:ff:ff link-netnsid 1
+    inet 172.17.0.7/16 scope global veth-test1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::ace5:c9ff:fe07:b4f5/64 scope link
+       valid_lft forever preferred_lft forever
+[root@liujianfeng ~]# ip netns exec test3 ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+48: veth-test3@if49: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether e6:48:d1:75:76:36 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 172.17.0.8/16 scope global veth-test3
+       valid_lft forever preferred_lft forever
+    inet6 fe80::e448:d1ff:fe75:7636/64 scope link
+       valid_lft forever preferred_lft forever
+
+// 在 test1 中 ping test3
+[root@liujianfeng ~]# ip netns exec test1 ping 172.17.0.8
+PING 172.17.0.8 (172.17.0.8) 56(84) bytes of data.
+64 bytes from 172.17.0.8: icmp_seq=1 ttl=64 time=0.087 ms
+64 bytes from 172.17.0.8: icmp_seq=2 ttl=64 time=0.045 ms
+64 bytes from 172.17.0.8: icmp_seq=3 ttl=64 time=0.041 ms
+64 bytes from 172.17.0.8: icmp_seq=4 ttl=64 time=0.032 ms
+^C
+--- 172.17.0.8 ping statistics ---
+```
+**Docker 桥接网络模式示意图：**
+<img src="/notes/docker/bridge.png" style="display:block;margin:0 auto"/>
 
 ## null 空网络模式
 > null 网络模式的容器就像一个没有联网的电脑，处于一个相对较安全的环境。容器还是拥有自己独立的 Net Namespace，
@@ -191,7 +372,4 @@ CONTAINER ID        IMAGE               COMMAND               CREATED           
     inet 172.17.0.3/16 brd 172.17.255.255 scope global eth0
        valid_lft forever preferred_lft forever
 ```
-> 用途：两个容器之间需要直接通过 localhost 通信，一般用于网络接管或者代理场景
-
-## bridge 桥接模式
->  Docker 本地网络实现利用了 Linux 的 Network Namespace 和 Virtual Ethernet Pair (veth pair)
+> 用途：两个容器之间需要直接通过 localhost 通信，一般用于网络接管或者代理场景。
