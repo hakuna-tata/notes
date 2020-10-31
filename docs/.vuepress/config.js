@@ -15,7 +15,7 @@ module.exports = {
     repo: 'hakuna-tata/notes/',
     nav: [
       { text: '计算机网络', link: '/network/networkLayer' },
-      { text: 'Docker', link: '/docker/network' },
+      { text: 'Docker', link: '/docker/singleMac' },
       { text: '设计模式', link: '/designPatterns/' },
       {   
         text: 'Web系列',
@@ -43,8 +43,8 @@ module.exports = {
           title: 'Docker 笔记',
           collapsable: false,
           children:[
-            ['network', 'Docker 网络'],
-            ['compose', 'Docker 多容器']
+            ['singleMac', '单机容器网络'],
+            ['multipleMac', '多机容器网络']
           ]
         }
       ],
