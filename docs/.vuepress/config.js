@@ -44,7 +44,8 @@ module.exports = {
           collapsable: false,
           children:[
             ['singleMac', '单机容器网络'],
-            ['multipleMac', '多机容器网络']
+            ['multipleMac', '多机容器网络'],
+            ['volume', '持久化存储和数据共享']
           ]
         }
       ],
