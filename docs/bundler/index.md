@@ -68,7 +68,7 @@ const moduleAnalyser = (filename) => {
 // console.log(moduleAnalyser('./src/index.js'))
 ```
 测试打印入口文件的依赖Map:
-<img src="/notes/kit/bundler/singleMap.png" style="display:block;margin:0 auto"/>
+<img src="/notes/bundler/singleMap.png" style="display:block;margin:0 auto"/>
 
 **2.生成依赖图谱**
 ``` js
@@ -99,7 +99,7 @@ const makeDependenciesGraph = ( entry ) => {
 // console.log(makeDependenciesGraph('./src/index.js'))
 ```
 测试打印依赖图谱:
-<img src="/notes/kit/bundler/graph.png" style="display:block;margin:0 auto"/>
+<img src="/notes/bundler/graph.png" style="display:block;margin:0 auto"/>
 
 **3.生成最后打包代码**
 ``` js
@@ -132,9 +132,9 @@ const generateCode = ( entry ) => {
 // console.log(generateCode('./src/index.js'))
 ```
 测试生成的代码字符串:
-<img src="/notes/kit/bundler/strFunction.png" style="display:block;margin:0 auto"/>
+<img src="/notes/bundler/strFunction.png" style="display:block;margin:0 auto"/>
 将生成的这段代码字符串放在浏览器端执行:
-<img src="/notes/kit/bundler/browserTest.png" style="display:block;margin:0 auto"/>
+<img src="/notes/bundler/browserTest.png" style="display:block;margin:0 auto"/>
 
 ## 对比使用webpack打包
 ``` js
@@ -145,7 +145,7 @@ const generateCode = ( entry ) => {
 webpack --mode development --devtool none index.js --output dist/main.js
 ```
 打包构建的main.js如下所示（做了简单的格式化）：
-<img src="/notes/kit/bundler/webpackBundler.png" style="display:block;margin:0 auto"/>
+<img src="/notes/bundler/webpackBundler.png" style="display:block;margin:0 auto"/>
 > __webpack_require__和__webpack_exports__跟上面写的require和exports是不是很相似，详细细节就不多做介绍了。
 
 ## 总结
