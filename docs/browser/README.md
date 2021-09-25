@@ -61,9 +61,6 @@
   - 5 - 1 构建DOM树（浏览器无法直接理解和使用HTML，所以需要将HTML转换为浏览器能够理解的结构--DOM树）
   - 5 - 2 样式计算（浏览器无法理解这些纯文本的CSS样式，所以当渲染引擎接收到CSS文本时，会执行转换操作，将CSS文本转换为浏览器可以理解的结构--styleSheets）
   > 浏览器控制台输入document.styleSheets测试计算出DOM树所有节点的样式
-
-  <img src="/notes/browser/styleSheets.png" style="display:block;margin:0 auto"/>
-
   - 5 - 3 创建布局树Layout（生成完DOM树和DOM样式，接下来就需要计算出DOM树中可见元素的几何位置，生成一颗只包含可见元素的布局树）
   - 5 - 4 对布局树进行分层Layer，特定的节点生成专用的图层，并生成一棵对应的图层树
   > 一般满足以下情况渲染引擎会为特定节点创建新图层：  
